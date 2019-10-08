@@ -1,1 +1,1 @@
-# nuclear-core-optimization
+# nuclear-core-design
