@@ -1,8 +1,10 @@
 import gym
+import yaml
 import numpy as np
 import random
 from gym import error, spaces, utils
 from gym.utils import seeding
+import os
 
 '''
 calls _check_rep before and after the function to ensure it did not violate the invariants
@@ -18,8 +20,18 @@ def check_rep_decorate(func):
 class ColorEnv(gym.Env):
 
     def __init__(self):
-        self.n = 2 # n is the sidelength of our square gameboard, must be greater than 1
-        self.num_colors = 4 # number of colors that the AI can choose from
+        # read in configuration file
+        with open("colorenv/config.yml", "r") as ymlfile:
+            config = yaml.safe_load(ymlfile)
+
+            self.n = config['gym']['n'] # n is the sidelength of our square gameboard, must be greater than 1
+            self.num_colors = config['gym']['num_colors'] # number of colors that the AI can choose from
+            self.maximize_red = config['gym']['maximize_red'] # enables different reward scheme, 1 for every red placement, -100 for invalid layout at the end
+
+            seed = config['gym']['seed']
+            if (seed != None):
+                random.seed(seed)
+
         self.free_coords = set() # a set of all the remaining coordinates to put pieces in
         for i in range(self.n):
             for j in range(self.n):
@@ -32,7 +44,6 @@ class ColorEnv(gym.Env):
 
         self.counter = 0 # the number of pieces that have been placed
         self.done = False # true if environement has reached terminal state, false otherwise
-        self.maximize_red = True # enables different reward scheme, 1 for every red placement, -100 for invalid layout at the end
         self.current_loc = random.choice(tuple(self.free_coords)) # the next location to place a piece at
 
         # set the first location in the placement array
