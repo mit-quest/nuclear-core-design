@@ -8,6 +8,11 @@ verify_ssl = true
 [packages]
 gym = "*"
 pyyaml = "*"
+ray = {extras = ["rllib"],version = "*"}
+requests = "*"
+setuptools = "*"
+pandas = "*"
+tensorboard = "*"
 
 [requires]
 python_version = "3.6"

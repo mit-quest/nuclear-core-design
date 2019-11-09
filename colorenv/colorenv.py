@@ -2,7 +2,8 @@ import gym
 import yaml
 import numpy as np
 import random
-from gym import error, spaces, utils
+from gym import error, utils
+from gym.spaces import Discrete, Box
 from gym.utils import seeding
 import os
 
@@ -11,9 +12,9 @@ calls _check_rep before and after the function to ensure it did not violate the 
 '''
 def check_rep_decorate(func):
     def func_wrapper(self,*args, **kwargs):
-        self._check_rep()
+        # self._check_rep()
         out = func(self,*args, **kwargs)
-        self._check_rep()
+        # self._check_rep()
         return out
     return func_wrapper
 
@@ -21,7 +22,7 @@ class ColorEnv(gym.Env):
 
     def __init__(self):
         # read in configuration file
-        with open("colorenv/config.yml", "r") as ymlfile:
+        with open("/home/isaacw/Documents/UROP/nuclear-core-design/colorenv/config.yml", "r") as ymlfile:
             config = yaml.safe_load(ymlfile)
 
             self.n = config['gym']['n'] # n is the sidelength of our square gameboard, must be greater than 1
@@ -31,6 +32,9 @@ class ColorEnv(gym.Env):
             seed = config['gym']['seed']
             if (seed != None):
                 random.seed(seed)
+
+        self.action_space = Discrete(self.num_colors)
+        self.observation_space = Box(low=0, high=self.num_colors+1, shape=(self.n, self.n, 2), dtype=np.int32)
 
         self.free_coords = set() # a set of all the remaining coordinates to put pieces in
         for i in range(self.n):
@@ -127,11 +131,17 @@ class ColorEnv(gym.Env):
     '''
     @check_rep_decorate
     def step(self, action):
-        assert action <= self.num_colors, "this color is not legal"
+        action = action + 1 # action goes from 0 to num_colors-1 so we need to add one to get the actual color
+
+        # assert action <= self.num_colors, "this color {} is not legal".format(action)
+        # assert action > 0, "this color {} is not legal".format(action)
+        if (action > self.num_colors or action <= 0):
+            print("Illegal action: {} attempted.".format(action))
+            return [self.state, -1, self.done, {}]
 
         if self.done:
             print("Game is already over")
-            return [self.state, 0, self.done, None]
+            return [self.state, 0, self.done, {}]
 
         self.counter += 1
         self.state[self.current_loc[0],self.current_loc[1],0] = action
@@ -146,10 +156,12 @@ class ColorEnv(gym.Env):
             else:
                 reward = -100 if self.maximize_red else 0
 
+            # self.render()
+
         else:
             self._get_next_location()
 
-        return [self.state, reward, self.done, None]
+        return [self.state, reward, self.done, {}]
 
     '''
     resets the board to be entirely empty with a random next placement location
@@ -171,7 +183,6 @@ class ColorEnv(gym.Env):
 
         return self.state
 
-    @check_rep_decorate
     def render(self, mode='human', close=False):
         print("Board state:")
         print(self.state[:,:,0])
