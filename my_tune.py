@@ -10,11 +10,15 @@ if __name__ == "__main__":
     register_env("coloring", lambda config: ColorEnv())
     ray.init()
     tune.run(
-        "PPO",
-        stop={"episode_reward_mean": .9},
+        "APPO",
+        stop={"episode_reward_mean": .8},
         config={
             "env": "coloring",
-            "lr": 1e-2,
-            "num_workers": 7,  # parallelism
+            # "exploration_fraction": 0.3,
+            # "exploration_fraction": tune.grid_search([.001, .01, .05, .1, .2, .3]),
+            # "lr": tune.grid_search([0.05, 0.005, 0.0005]),
+            # "lr": 1e-2,
+            "num_workers": 15,
+            # "log_level": "DEBUG",
         },
     )
