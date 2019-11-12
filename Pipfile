@@ -12,7 +12,6 @@ ray = {extras = ["rllib"],version = "*"}
 requests = "*"
 setuptools = "*"
 pandas = "*"
-tensorboard = "*"
 
 [requires]
 python_version = "3.6"

@@ -6,7 +6,7 @@ def step_render(env, action):
     env.render()
 
 env = gym.make('ColorEnv-v0')
+step_render(env,0)
 step_render(env,1)
-step_render(env,1)
-step_render(env,3)
-step_render(env,4)
+step_render(env,2)
+step_render(env,2)

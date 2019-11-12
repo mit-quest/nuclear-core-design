@@ -22,12 +22,14 @@ class ColorEnv(gym.Env):
 
     def __init__(self):
         # read in configuration file
-        with open("/home/isaacw/Documents/UROP/nuclear-core-design/colorenv/config.yml", "r") as ymlfile:
+        with open("/home/isaacw/Documents/nuclear-core-design/colorenv/config.yml", "r") as ymlfile:
             config = yaml.safe_load(ymlfile)
 
             self.n = config['gym']['n'] # n is the sidelength of our square gameboard, must be greater than 1
             self.num_colors = config['gym']['num_colors'] # number of colors that the AI can choose from
             self.maximize_red = config['gym']['maximize_red'] # enables different reward scheme, 1 for every red placement, -100 for invalid layout at the end
+            self.ordered_placement = config['gym']['ordered_placement'] # true results in deterministic placement order
+            self.disable_checking = config['gym']['disable_checking'] # turns off board color checking at terminal step
 
             seed = config['gym']['seed']
             if (seed != None):
@@ -36,10 +38,7 @@ class ColorEnv(gym.Env):
         self.action_space = Discrete(self.num_colors)
         self.observation_space = Box(low=0, high=self.num_colors+1, shape=(self.n, self.n, 2), dtype=np.int32)
 
-        self.free_coords = set() # a set of all the remaining coordinates to put pieces in
-        for i in range(self.n):
-            for j in range(self.n):
-                self.free_coords.add((i,j))
+        self._new_free_coords()
 
         # two n x n arrays stacked on top of each other, the first is the gameboard where 0 = no piece
         # and any other number represents the color at that location
@@ -48,12 +47,36 @@ class ColorEnv(gym.Env):
 
         self.counter = 0 # the number of pieces that have been placed
         self.done = False # true if environement has reached terminal state, false otherwise
-        self.current_loc = random.choice(tuple(self.free_coords)) # the next location to place a piece at
 
-        # set the first location in the placement array
-        self.free_coords.remove(self.current_loc)
+        self._first_location()
+
         self.state[self.current_loc[0],self.current_loc[1],1] = 1
 
+    '''
+    TODO comment here
+    '''
+    def _first_location(self):
+        if self.ordered_placement:
+            self.current_loc = self.free_coords.pop(0)
+        else:
+            # set the first location in the placement array
+            self.current_loc = random.choice(tuple(self.free_coords)) # the next location to place a piece at
+            self.free_coords.remove(self.current_loc)
+
+    '''
+    TODO comment here
+    '''
+    def _new_free_coords(self):
+        if self.ordered_placement:
+            self.free_coords = []
+            for i in range(self.n):
+                for j in range(self.n):
+                    self.free_coords.append((i,j))
+        else:
+            self.free_coords = set() # a set of all the remaining coordinates to put pieces in
+            for i in range(self.n):
+                for j in range(self.n):
+                    self.free_coords.add((i,j))
 
     '''
     gets the number of non-zero elements in the provided array
@@ -85,9 +108,12 @@ class ColorEnv(gym.Env):
     def _get_next_location(self):
         assert len(self.free_coords), "free_coords is empty, there are no more positions availble"
 
-        # get new location and remove it from future options
-        new_loc = random.choice(tuple(self.free_coords))
-        self.free_coords.remove(new_loc)
+        if self.ordered_placement:
+            new_loc = self.free_coords.pop(0)
+        else:
+            # get new location and remove it from future options
+            new_loc = random.choice(tuple(self.free_coords))
+            self.free_coords.remove(new_loc)
 
         # set old location in placement array to 0, set new location to 1
         self.state[self.current_loc[0],self.current_loc[1],1] = 0
@@ -108,6 +134,9 @@ class ColorEnv(gym.Env):
     '''
     @check_rep_decorate
     def _check_legal_board(self):
+        if self.disable_checking:
+            return True
+
         board = self.state[:,:,0]
 
         # checks for all pieces (except the last column and row)
@@ -168,18 +197,13 @@ class ColorEnv(gym.Env):
     '''
     @check_rep_decorate
     def reset(self):
-        for i in range(self.n):
-            for j in range(self.n):
-                self.free_coords.add((i,j))
+        self._new_free_coords()
 
         self.state = np.zeros((self.n, self.n, 2), dtype = int)
         self.counter = 0
         self.done = 0
-        self.current_loc = random.choice(tuple(self.free_coords)) # the next location to place a piece at
 
-        # set the first location in the placement array
-        self.free_coords.remove(self.current_loc)
-        self.state[self.current_loc[0],self.current_loc[1],1] = 1
+        self._first_location()
 
         return self.state
 
