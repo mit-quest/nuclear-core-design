@@ -3,3 +3,4 @@ pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.8.0.de
 pip install ray[tune]
 pip install ray[rllib]
 pip install ray[debug]
+pip install -r requirements.txt
