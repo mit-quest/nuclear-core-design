@@ -5,3 +5,4 @@ gym:
     seed: null # null is equivalent to python none
     ordered_placement: false
     disable_checking: false # only used in combination with the maximize_red flag for debugging
+    flatten: true

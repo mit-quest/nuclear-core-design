@@ -2,7 +2,9 @@ import gym
 import colorenv
 
 def step_render(env, action):
-    print(env.step(action)[1:])
+    # print(env.step(action)[1:])
+    print("Returned from step with action {}:".format(action))
+    print(env.step(action))
     env.render()
 
 env = gym.make('ColorEnv-v0')

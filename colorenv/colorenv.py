@@ -30,13 +30,17 @@ class ColorEnv(gym.Env):
             self.maximize_red = config['gym']['maximize_red'] # enables different reward scheme, 1 for every red placement, -100 for invalid layout at the end
             self.ordered_placement = config['gym']['ordered_placement'] # true results in deterministic placement order
             self.disable_checking = config['gym']['disable_checking'] # turns off board color checking at terminal step
+            self.flatten = config['gym']['flatten'] # if true, flatttens the state to a 1d vector before returning
 
             seed = config['gym']['seed']
             if (seed != None):
                 random.seed(seed)
 
         self.action_space = Discrete(self.num_colors)
-        self.observation_space = Box(low=0, high=self.num_colors+1, shape=(self.n, self.n, 2), dtype=np.int32)
+        if self.flatten:
+            self.observation_space = Box(low=0, high=self.num_colors+1, shape=(self.n * self.n * 2,), dtype=np.int32)
+        else:
+            self.observation_space = Box(low=0, high=self.num_colors+1, shape=(self.n, self.n, 2), dtype=np.int32)
 
         self._new_free_coords()
 
@@ -53,7 +57,18 @@ class ColorEnv(gym.Env):
         self.state[self.current_loc[0],self.current_loc[1],1] = 1
 
     '''
-    TODO comment here
+    returns the view the agent gets of the state, which is either identical to the the internal
+    state view or a flattened view depending on the self.flatten paramater set during config
+    '''
+    def _get_state_agent_view(self):
+        if self.flatten:
+            return self.state.flatten()
+        else:
+            return self.state
+
+    '''
+    gets the first location to place a piece on before returning the board state for the first time
+    the result depends on whether the placement order is deterministic (controlled by self.ordered_placement)
     '''
     def _first_location(self):
         if self.ordered_placement:
@@ -64,7 +79,8 @@ class ColorEnv(gym.Env):
             self.free_coords.remove(self.current_loc)
 
     '''
-    TODO comment here
+    regenerates the self.ordered_placement collection, which is an ordered list if placement
+    is deterministic and a set if placement order is non-deterministic
     '''
     def _new_free_coords(self):
         if self.ordered_placement:
@@ -166,11 +182,11 @@ class ColorEnv(gym.Env):
         # assert action > 0, "this color {} is not legal".format(action)
         if (action > self.num_colors or action <= 0):
             print("Illegal action: {} attempted.".format(action))
-            return [self.state, -1, self.done, {}]
+            return [self._get_state_agent_view(), -1, self.done, {}]
 
         if self.done:
             print("Game is already over")
-            return [self.state, 0, self.done, {}]
+            return [self._get_state_agent_view(), 0, self.done, {}]
 
         self.counter += 1
         self.state[self.current_loc[0],self.current_loc[1],0] = action
@@ -190,7 +206,7 @@ class ColorEnv(gym.Env):
         else:
             self._get_next_location()
 
-        return [self.state, reward, self.done, {}]
+        return [self._get_state_agent_view(), reward, self.done, {}]
 
     '''
     resets the board to be entirely empty with a random next placement location
@@ -205,7 +221,7 @@ class ColorEnv(gym.Env):
 
         self._first_location()
 
-        return self.state
+        return self._get_state_agent_view()
 
     def render(self, mode='human', close=False):
         print("Board state:")
