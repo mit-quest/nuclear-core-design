@@ -1,14 +1,16 @@
 import gym
-import colorenv
 import statistics
+import os
+from colorenv.colorenv import ColorEnv
 
 rewards = []
-num_iterations = 10000
-env = gym.make("ColorEnv-v0")
+num_iterations = 100000
+path_to_config = os.getcwd() + "/colorenv/config.yml"
+env = ColorEnv(path_to_config)
 observation = env.reset()
 
 for _ in range(num_iterations):
-  action = env.action_space.sample() # your agent here (this takes random actions)
+  action = env.action_space.sample() # this takes random actions
   observation, reward, done, info = env.step(action)
 
   if done:

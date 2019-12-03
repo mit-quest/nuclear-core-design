@@ -18,9 +18,7 @@ if __name__ == "__main__":
         config={
             "env": "coloring",
             "schedule_max_timesteps": 1000000,
-            # "exploration_fraction": tune.grid_search([.001, .01, .05, .1]),
-            "exploration_fraction": .1,
-            # "num_workers": tune.grid_search([0,1,2]),
+            "exploration_fraction": .01,
             "num_workers": 0,
         },
     )
