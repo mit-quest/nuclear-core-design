@@ -1,5 +1,5 @@
 gym:
-    n: 2
+    n: 3
     num_colors: 2
     maximize_red: false
     seed: null # null is equivalent to python none

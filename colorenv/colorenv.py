@@ -20,9 +20,9 @@ def check_rep_decorate(func):
 
 class ColorEnv(gym.Env):
 
-    def __init__(self):
+    def __init__(self, path_to_config):
         # read in configuration file
-        with open("/home/isaacw/Documents/nuclear-core-design/colorenv/config.yml", "r") as ymlfile:
+        with open(path_to_config, "r") as ymlfile:
             config = yaml.safe_load(ymlfile)
 
             self.n = config['gym']['n'] # n is the sidelength of our square gameboard, must be greater than 1
