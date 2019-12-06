@@ -1,0 +1,8 @@
+gym:
+    n: 3
+    num_colors: 2
+    maximize_red: false
+    seed: null # null is equivalent to python none
+    ordered_placement: false
+    disable_checking: false # only used in combination with the maximize_red flag for debugging
+    flatten: true
