@@ -8,7 +8,7 @@ from colorenv.colorenv import ColorEnv
 import os
 
 if __name__ == "__main__":
-    path_to_config = os.getcwd() + "/colorenv/config.yml"
+    path_to_config = os.getcwd() + "/colorenv/config.yaml"
 
     register_env("coloring", lambda config: ColorEnv(path_to_config))
     ray.init()
