@@ -2,8 +2,6 @@ import numpy as np
 import gym
 import math
 import ray
-import os
-import argparse
 import pandas as pd
 from ray import tune
 from ray.tune import grid_search
@@ -47,13 +45,27 @@ def plot_ave_reward(analysis):
 
 
 if __name__ == "__main__":
+    import os
+    import argparse
+
     parser = argparse.ArgumentParser(description='Train an RL agent on the coloring environment')
-    parser.add_argument('-t', '--num_trials', metavar='N', type=int, default=1, help='The number of trials to run. If num_trials != 1 a plot \
-            will be generated upon termination that shows the average reward graphed against all the trials.')
-    parser.add_argument('-s', '--seed', metavar='N', type=int, help= "specify a seed to Rllib to make training reproducible")
+    parser.add_argument(
+        '-t',
+        '--num_trials',
+        metavar='N',
+        type=int,
+        default=1,
+        help=('The number of trials to run. If num_trials != 1 a plot will be generated upon termination that shows '
+              'the average reward graphed against all the trials.'))
+    parser.add_argument(
+        '-s', '--seed',
+        metavar='N',
+        type=int,
+        default=None,
+        help="specify a seed to Rllib to make training reproducible")
     args = parser.parse_args()
 
-    path_to_config = os.getcwd() + "/colorenv/config.yml"
+    path_to_config = os.getcwd() + "/colorenv/config.yaml"
 
     register_env("coloring", lambda config: ColorEnv(path_to_config))
     ray.init()
@@ -65,7 +77,7 @@ if __name__ == "__main__":
             "schedule_max_timesteps": 1000000,
             "exploration_fraction": .1,
             "num_workers": 0,
-            "seed": args.seed, #defaults to none if not specified
+            "seed": args.seed,
         },
         num_samples=args.num_trials,
     )
