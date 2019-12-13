@@ -24,7 +24,7 @@ VENV_PIP := ${VENV_LOCATION}/bin/pip
 setup:
 	@echo ${VENV_LOCATION}
 	@virtualenv --always-copy --python=${PYTHON} ${VENV_LOCATION}
-	${VENV_PIP} install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.8.0.dev6-cp36-cp36m-manylinux1_x86_64.whl  # fix for pandas bug
+	${VENV_PIP} install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.8.0.dev7-cp36-cp36m-manylinux1_x86_64.whl
 	${VENV_PIP} install -r requirements.txt
 
 clean:
