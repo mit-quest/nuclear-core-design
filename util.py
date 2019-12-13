@@ -116,10 +116,10 @@ def plot_ave_reward(analysis):
 
     plt.xlabel("Iteration Number")
     plt.ylabel("Averge Reward")
-    plt.title("Average Reward Across All Trials with Std Error Bars")
 
     if varied_param is not None:
         #plot multiple lines, one for each value of varied_param
+        plt.title("Average Reward and Std Error Bars, {} samples per line".format(len(all_trials)//len(param_values)))
         x = get_x_array(reward_matrix)
 
         colors = iter(cm.rainbow(np.linspace(0,1,len(param_values))))
@@ -136,6 +136,7 @@ def plot_ave_reward(analysis):
 
     else:
         #plot one line
+        plt.title("Average Reward and Std Error Bars, {} samples per line".format(len(all_trials)))
         x = get_x_array(reward_matrix)
         ave_reward = get_ave_reward(reward_matrix)
         std_err = get_std_error(reward_matrix)
