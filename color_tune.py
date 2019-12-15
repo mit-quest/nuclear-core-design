@@ -12,6 +12,19 @@ from ray.tune.registry import register_env
 from colorenv.colorenv import ColorEnv
 from util import plot_ave_reward
 
+count = 0
+search_values = [.01, .1, .2]
+param_name = "exploration_fraction"
+
+def get_trial_name(trial):
+    if param_name is not None:
+        global count
+        trial_name = "{}={}_".format(param_name, search_values[count % len(search_values)]) + str(trial)
+        count += 1
+        return trial_name
+
+    return trial
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train an RL agent on the coloring environment')
     parser.add_argument(
@@ -37,14 +50,18 @@ if __name__ == "__main__":
     analysis = tune.run(
         "DQN",
         stop={"episode_reward_mean": 0.98},
+        trial_name_creator=get_trial_name,
         config={
             "env": "coloring",
             "schedule_max_timesteps": 1000000,
-            "exploration_fraction": .1,
+            param_name: tune.grid_search(search_values),
             "num_workers": 0,
             "seed": args.seed,
         },
         num_samples=args.num_trials,
+        checkpoint_freq = 10,
+        checkpoint_at_end=True,
+        max_failures = 5,
     )
 
     if (args.num_trials != 1):
