@@ -43,4 +43,8 @@ if __name__ == '__main__':
         if done:
             break
 
-    print("You reached the maximum number of actions, the game has ended")
+    print("You reached the maximum number of actions, the game has ended.\n")
+
+    # print final board state
+    print("Final ", end="")
+    env.render()
