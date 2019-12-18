@@ -205,13 +205,13 @@ class SwapEnv(gym.Env):
 
             for i in range(row_len):
                 if i == row_len - 1:
-                    print("\033[4m"+ str(i) + "\033[0m")
+                    print("\033[4m"+ str(i) + " \033[0m")
                 else:
-                    print("\033[4m"+ str(i) + " \033[0m", end="")
+                    print("\033[4m"+ str(i) + "  \033[0m", end="")
 
             start = 0
             for i in range(row_len):
                 print(i, end="| ")
-                print(" ".join(map(lambda x: str(x), range(start, start+row_len))))
+                print(" ".join(map(lambda x: str(x) if x > 9 else str(x) + " ", range(start, start+row_len))))
                 start += row_len
             print()
