@@ -2,12 +2,6 @@ import gym
 import os
 from swapenv import SwapEnv
 
-def step_render(env, action):
-    # print(env.step(action)[1:])
-    print("Returned from step with action {}:".format(action))
-    print(env.step(action))
-    env.render()
-
 def get_user_action(env):
     env.render(show_position_numbers=True)
     print("What action would you like to take? Enter 1 for null move, otherwise enter two locations to swap:")
