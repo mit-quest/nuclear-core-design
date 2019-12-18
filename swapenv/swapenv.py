@@ -1,11 +1,12 @@
 import gym
 import yaml
-import numpy as np
+import os
 import random
+import numpy as np
 from gym import error, utils
 from gym.spaces import Discrete, Box, Tuple
 from gym.utils import seeding
-import os
+from colorama import Fore
 
 '''
 calls _check_rep before and after the function to ensure it did not violate the invariants
@@ -145,6 +146,11 @@ class SwapEnv(gym.Env):
             print("Game is already over")
             return [self._get_state_agent_view(), 0, self.done, {}]
 
+        self.counter += 1
+        # check if game is over after this action
+        if self.counter == self.game_length:
+            self.done = True
+
         if null == 1:
             # this is the null move, the agent has chosen not to swap pieces
             return [self._get_state_agent_view(), self._current_score(), self.done, {}]
@@ -155,15 +161,10 @@ class SwapEnv(gym.Env):
         row2 = loc2 // self.n
         col2 = loc2 % self.n
 
-        # increment the counter and swap the pieces
-        self.counter += 1
+        # swap the pieces
         temp = self.state[row1, col1]
         self.state[row1, col1] = self.state[row2, col2]
         self.state[row2, col2] = temp
-
-        # check if game is over
-        if self.counter == self.game_length:
-            self.done = True
 
         return [self._get_state_agent_view(), self._current_score(), self.done, {}]
 
@@ -178,7 +179,39 @@ class SwapEnv(gym.Env):
 
         return self._get_state_agent_view()
 
-    def render(self, mode='human', close=False):
+    def render(self, mode='human', close=False, show_position_numbers=False):
+        row_len = self.state.shape[0]
+        #warning, colors will begin to cycle if there are more than 6
+        text_colors = [Fore.RED, Fore.BLUE, Fore.GREEN, Fore.YELLOW, Fore.MAGENTA, Fore.CYAN]
+
         print("Board state:")
-        print(self.state)
+        print(" " * 3, end="")
+
+        for i in range(row_len):
+            if i == row_len - 1:
+                print("\033[4m"+ str(i) + "\033[0m")
+            else:
+                print("\033[4m"+ str(i) + " \033[0m", end="")
+
+        for i,row in enumerate(self.state):
+            print(i, end="| ")
+            print(" ".join(map(lambda x: text_colors[(x-1)%6] + str(x), list(row))))
+            print(Fore.WHITE, end="")
         print()
+
+        if show_position_numbers:
+            print("Position Numbers:")
+            print(" " * 3, end="")
+
+            for i in range(row_len):
+                if i == row_len - 1:
+                    print("\033[4m"+ str(i) + "\033[0m")
+                else:
+                    print("\033[4m"+ str(i) + " \033[0m", end="")
+
+            start = 0
+            for i in range(row_len):
+                print(i, end="| ")
+                print(" ".join(map(lambda x: str(x), range(start, start+row_len))))
+                start += row_len
+            print()
