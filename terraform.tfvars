@@ -1,0 +1,13 @@
+project_name             = "nuclearcoredesign"
+username                 = "isaacw_google"
+gcp_key_file_location    = "keys/nuclearcoredesign-cba40107d1ab.json"
+public_ssh_key_location  = "~/.ssh/gcp.pub"
+private_ssh_key_location = "~/.ssh/gcp"
+repository_name          = "nuclear-core-design"
+hard_drive_size_gp       = "150"
+ram_size_mb              = "25600"
+number_of_cpus           = "4"
+number_of_machines       = 1
+/* //gpu_type = "nvidia-tesla-p100" */
+/* gpu_type = "nvidia-tesla-k80" */
+/* number_of_gpus = 1 */
