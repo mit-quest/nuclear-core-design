@@ -7,8 +7,8 @@ variable "hard_drive_size_gp" {}
 variable "number_of_machines" {}
 variable "private_ssh_key_location" {}
 variable "public_ssh_key_location" {}
-/* variable "gpu_type" {} */
-/* variable "number_of_gpus" {} */
+variable "gpu_type" {}
+variable "number_of_gpus" {}
 variable "repository_name" {}
 
 
@@ -20,7 +20,8 @@ provider "google" {
 
 resource "google_compute_instance" "vm" {
   count                     = var.number_of_machines
-  name                      = "${element(split("_", var.username), 0)}-${var.project_name}-${count.index}"
+  /* name                      = "${element(split("_", var.username), 0)}-${var.project_name}-${count.index}" */
+  name                      = "${element(split("_", var.username), 0)}-nuclearcoredesign-${count.index}"
   machine_type              = "custom-${var.number_of_cpus}-${var.ram_size_mb}"
   zone                      = "us-east1-c"
   allow_stopping_for_update = true
@@ -50,10 +51,10 @@ resource "google_compute_instance" "vm" {
     }
   }
 
-  /* guest_accelerator{ */
-  /*   type = var.gpu_type // Type of GPU attahced */
-  /*   count = var.number_of_gpus // Num of GPU attached */
-  /* } */
+  guest_accelerator{
+    type = var.gpu_type // Type of GPU attahced
+    count = var.number_of_gpus // Num of GPU attached
+  }
 
   scheduling {
     on_host_maintenance = "TERMINATE" // Need to terminate GPU on maintenance
@@ -80,18 +81,18 @@ resource "google_compute_instance" "vm" {
     }
   }
 
-  /* # final reboot because of the cuda install, will tell terraform it has "failed" since it lost connection */
-  /* provisioner "remote-exec" { */
-  /*   inline = [ */
-  /*     "sudo reboot" */
-  /*   ] */
-  /*   on_failure = "continue"  # ignore the incorrect failure */
-  /*   connection { */
-  /*     user = var.username */
-  /*     type = "ssh" */
-  /*     private_key = file(var.private_ssh_key_location) */
-  /*     host = self.network_interface[0].access_config[0].nat_ip */
-  /*   } */
-  /* } */
+  # final reboot because of the cuda install, will tell terraform it has "failed" since it lost connection
+  provisioner "remote-exec" {
+    inline = [
+      "sudo reboot"
+    ]
+    on_failure = continue  # ignore the incorrect failure
+    connection {
+      user = var.username
+      type = "ssh"
+      private_key = file(var.private_ssh_key_location)
+      host = self.network_interface[0].access_config[0].nat_ip
+    }
+  }
 
 }
