@@ -3,13 +3,13 @@ This environment simulates an N x N grid where each space is initialized to 0.0.
 
 ### Running the random agent:
 1. Ensure you are in the `nuclear-core-design` directory
-1. Run `source .venv/bin/activate` to enter the virtual environement
-2. Run `python floatenv/random_float_agent.py`
+2. Run `source .venv/bin/activate` to enter the virtual environement
+3. Run `python floatenv/random_float_agent.py`
 
 ### Running the examples:
 1. Ensure you are in the `nuclear-core-design` directory
-1. Run `source .venv/bin/activate` to enter the virtual environement
-2. Run `python floatenv/float_tune.py` to train a PPO agent on a 5x5 floating environment
+2. Run `source .venv/bin/activate` to enter the virtual environement
+3. Run `python floatenv/float_tune.py` to train a PPO agent on a 5x5 floating environment
 
 ### Visualization:
 After running one of the tune scripts you can run `tensorboard --logdir=~/ray_results/` in another window to visualize training in your browser

@@ -21,6 +21,10 @@ The purpose of the Coloring Environment is to serve as an optimization test over
 
 The purpose of the Float Environment is to serve as an optimization test over a parameterized number of continuous variables. See a detailed description of the environment and how to run agents in it [here](floatenv/README.md).
 
+### Swap Environment
+
+The purpose of the Swap Environment is to serve as an optimization test over a parameterized number of discrete variables. See a detailed description of the environment and how to run agents in it [here](swapenv/README.md).
+
 ## Visualization:
 After running one of the tune scripts you can run `tensorboard --logdir=results` in another window to visualize training in your browser.
 
