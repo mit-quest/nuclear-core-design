@@ -1,4 +1,6 @@
 import os
+import pathlib
+os.environ["TUNE_RESULT_DIR"] = str(pathlib.Path().absolute()) + "/results" # tells tune to log in nuclear-core-design/results
 import sys
 import argparse
 import gym
@@ -11,7 +13,7 @@ from ray import tune
 from ray.tune import grid_search
 from ray.tune.registry import register_env
 from swapenv import SwapEnv
-sys.path.append("..")
+sys.path.append(".")
 from util import plot_ave_reward
 
 count = 0
@@ -46,7 +48,7 @@ if __name__ == "__main__":
         help="specify a seed to Rllib to make training reproducible")
     args = parser.parse_args()
 
-    path_to_config = os.getcwd() + "/config.yaml"
+    path_to_config = str(pathlib.Path(__file__).parent.absolute()) + "/config.yaml"
 
     register_env("swap", lambda config: SwapEnv(path_to_config))
     ray.init()
