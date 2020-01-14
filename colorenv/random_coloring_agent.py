@@ -1,7 +1,7 @@
 import gym
 import statistics
 import os
-from colorenv.colorenv import ColorEnv
+from colorenv import ColorEnv
 
 rewards = []
 num_iterations = 100000

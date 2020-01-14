@@ -1,3 +1,6 @@
 *.pyc 
 .idea
 .venv
+results/
+.terraform
+terraform.tfstate*
