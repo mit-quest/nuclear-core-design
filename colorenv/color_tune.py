@@ -1,6 +1,6 @@
 import os
-import pathlib
-os.environ["TUNE_RESULT_DIR"] = str(pathlib.Path().absolute()) + "/results" # tells tune to log in nuclear-core-design/results
+from pathlib import Path
+os.environ["TUNE_RESULT_DIR"] = Path("./results").absolute().as_posix()  # tells tune to log in nuclear-core-design/results
 import sys
 import argparse
 import gym
@@ -47,7 +47,7 @@ if __name__ == "__main__":
         help="specify a seed to Rllib to make training reproducible")
     args = parser.parse_args()
 
-    path_to_config = str(pathlib.Path(__file__).parent.absolute()) + "/config.yaml"
+    path_to_config = str(Path(__file__).parent.absolute()) + "/config.yaml"
 
     register_env("coloring", lambda config: ColorEnv(path_to_config))
     ray.init()
