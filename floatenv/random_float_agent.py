@@ -5,7 +5,7 @@ from floatenv import FloatEnv
 
 rewards = []
 num_iterations = 100000
-path_to_config = os.getcwd() + "/config.yaml"
+path_to_config = os.getcwd() + "/floatenv/config.yaml"
 env = FloatEnv(path_to_config)
 observation = env.reset()
 
