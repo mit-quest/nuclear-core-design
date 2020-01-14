@@ -21,6 +21,7 @@ google==2.0.2
 google-auth==1.7.0
 google-auth-oauthlib==0.4.1
 google-pasta==0.1.8
+GPUtil==1.4.0
 grpcio==1.25.0
 gym==0.15.4
 h5py==2.10.0
