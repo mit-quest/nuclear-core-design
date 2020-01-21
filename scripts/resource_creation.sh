@@ -35,6 +35,7 @@ sudo apt-get install -y cmake \
 	htop \
 	tmux \
 	tree \
+  s3fs \
 
 python3 -m pip install --upgrade pip
 sudo python3 -m pip install virtualenv
