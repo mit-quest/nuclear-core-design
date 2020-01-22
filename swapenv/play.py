@@ -41,10 +41,15 @@ if __name__ == '__main__':
         print("Number of actions: ", actions_taken)
 
         if done:
-            break
+            print("You reached the maximum number of actions, the game has ended.\n")
+            # print final board state
+            print("Final ", end="")
+            env.render()
 
-    print("You reached the maximum number of actions, the game has ended.\n")
-
-    # print final board state
-    print("Final ", end="")
-    env.render()
+            if env.continuous_enabled():
+                env.reset()
+                actions_taken = 0
+                total_reward = 0
+                print("#" * 10, "Continuous mode enabled, new game beginning", "#" * 10, "\n")
+            else:
+                break

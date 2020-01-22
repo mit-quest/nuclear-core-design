@@ -54,7 +54,7 @@ if __name__ == "__main__":
     ray.init()
     analysis = tune.run(
         "PPO",
-        stop={"episode_reward_mean": 9.5},
+        stop={"episode_reward_mean": 8},
         trial_name_creator=get_trial_name,
         config={
             "env": "swap",
