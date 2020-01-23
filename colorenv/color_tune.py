@@ -50,7 +50,7 @@ if __name__ == "__main__":
     path_to_config = str(Path(__file__).parent.absolute()) + "/config.yaml"
 
     register_env("coloring", lambda config: ColorEnv(path_to_config))
-    ray.init()
+    ray.init(webui_host="0.0.0.0")
     analysis = tune.run(
         "DQN",
         stop={"episode_reward_mean": 0.98},
