@@ -20,7 +20,6 @@ provider "google" {
 
 resource "google_compute_instance" "vm" {
   count                     = var.number_of_machines
-  /* name                      = "${element(split("_", var.username), 0)}-${var.project_name}-${count.index}" */
   name                      = "${element(split("_", var.username), 0)}-nuclearcoredesign-${count.index}"
   machine_type              = "custom-${var.number_of_cpus}-${var.ram_size_mb}"
   zone                      = "us-east1-c"
@@ -36,7 +35,6 @@ resource "google_compute_instance" "vm" {
   }
 
   metadata = {
-    /* install-nvidia-driver = "True" */
     ssh-keys = "${var.username}:${file(var.public_ssh_key_location)}"
   }
 
@@ -54,6 +52,83 @@ resource "google_compute_instance" "vm" {
   guest_accelerator{
     type = var.gpu_type // Type of GPU attahced
     count = var.number_of_gpus // Num of GPU attached
+  }
+
+  scheduling {
+    on_host_maintenance = "TERMINATE" // Need to terminate GPU on maintenance
+  }
+
+  provisioner "file" {
+    source      = "../${var.repository_name}"
+    destination = "~/${var.repository_name}"
+    connection {
+      user        = var.username
+      type        = "ssh"
+      private_key = file(var.private_ssh_key_location)
+      host        = self.network_interface[0].access_config[0].nat_ip
+    }
+  }
+
+  provisioner "remote-exec" {
+    script = "./scripts/resource_creation.sh"
+    connection {
+      user        = var.username
+      type        = "ssh"
+      private_key = file(var.private_ssh_key_location)
+      host        = self.network_interface[0].access_config[0].nat_ip
+    }
+  }
+
+  # final reboot because of the cuda install, will tell terraform it has "failed" since it lost connection
+  provisioner "remote-exec" {
+    inline = [
+      "sudo reboot"
+    ]
+    on_failure = continue  # ignore the incorrect failure
+    connection {
+      user = var.username
+      type = "ssh"
+      private_key = file(var.private_ssh_key_location)
+      host = self.network_interface[0].access_config[0].nat_ip
+    }
+  }
+
+}
+
+resource "google_compute_instance" "dev_vm" {
+  count                     = 1
+  name                      = "isaacw-nuclearcoredesign-dev"
+  machine_type              = "custom-8-64"
+  zone                      = "us-east1-c"
+  allow_stopping_for_update = true
+  tags                      = [var.project_name]
+
+  boot_disk {
+    initialize_params {
+      image = "projects/ubuntu-os-cloud/global/images/ubuntu-1804-bionic-v20191211"
+      size  = "250"
+      type  = "pd-ssd"
+    }
+  }
+
+  metadata = {
+    ssh-keys = "${var.username}:${file(var.public_ssh_key_location)}"
+  }
+
+  service_account {
+    scopes = ["cloud-platform"]
+  }
+
+  network_interface {
+    network = "default"
+    access_config {
+      // Ephemeral IP - leaving this block empty will generate a new external IP and assign it to the machine
+    }
+  }
+
+  guest_accelerator{
+    type = var.gpu_type // Type of GPU attahced
+    count = 1 // Num of GPU attached
   }
 
   scheduling {
