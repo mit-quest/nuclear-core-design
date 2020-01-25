@@ -5,6 +5,7 @@
 #
 PYTHON ?= python3.6
 PIP ?= pip3.6
+UID := $(shell id -u ${USER})
 
 ###########################################################################
 # Virtual Environment Locations
@@ -26,6 +27,12 @@ setup:
 	@virtualenv --always-copy --system-site-packages --python=${PYTHON} ${VENV_LOCATION}
 	${VENV_PIP} install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.9.0.dev0-cp36-cp36m-manylinux1_x86_64.whl
 	${VENV_PIP} install -r requirements.txt
+
+mount:
+	@s3fs nuclearcoredesign_sandbox results/ -o umask=0007,uid=${UID} -o passwd_file=keys/gcs-auth.txt -o url=https://storage.googleapis.com -o sigv2 -o nomultipart
+
+unmount:
+	@sudo umount results/
 
 clean:
 	rm -rf .venv/
