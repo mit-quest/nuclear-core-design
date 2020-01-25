@@ -29,10 +29,12 @@ setup:
 	${VENV_PIP} install -r requirements.txt
 
 mount:
-	@s3fs nuclearcoredesign_sandbox results/ -o umask=0007,uid=${UID} -o passwd_file=keys/gcs-auth.txt -o url=https://storage.googleapis.com -o sigv2 -o nomultipart
+	@mkdir -p results
+	@chmod 600 keys/gcs-auth.txt
+	s3fs nuclearcoredesign_sandbox results/ -o umask=0007,uid=${UID} -o passwd_file=keys/gcs-auth.txt -o url=https://storage.googleapis.com -o sigv2 -o nomultipart
 
 unmount:
-	@sudo umount results/
+	sudo umount results/
 
 dockerGPUbuild:
 	docker image build -t nuclear_gpu:1.0 .
