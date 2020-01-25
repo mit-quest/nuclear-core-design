@@ -98,7 +98,7 @@ resource "google_compute_instance" "vm" {
 resource "google_compute_instance" "dev_vm" {
   count                     = 1
   name                      = "isaacw-nuclearcoredesign-dev"
-  machine_type              = "custom-8-64"
+  machine_type              = "custom-8-51200"
   zone                      = "us-east1-c"
   allow_stopping_for_update = true
   tags                      = [var.project_name]
