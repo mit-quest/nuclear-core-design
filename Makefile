@@ -34,5 +34,11 @@ mount:
 unmount:
 	@sudo umount results/
 
+dockerGPUbuild:
+	docker image build -t nuclear_gpu:1.0 .
+
+dockerGPUrun:
+	docker run --rm -it --shm-size=20G -p 0.0.0.0:6006:6006 --gpus all nuclear_gpu:1.0
+
 clean:
 	rm -rf .venv/
