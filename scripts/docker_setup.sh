@@ -14,4 +14,4 @@ apt-get install -y cmake \
 
 python3 -m pip install --upgrade pip
 python3 -m pip install virtualenv
-cd /home/nuclear-core-design && make
+cd /home/nuclear-core-design && make setup_no_tensorflow

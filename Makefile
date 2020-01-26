@@ -22,11 +22,14 @@ VENV_PIP := ${VENV_LOCATION}/bin/pip
 #
 .DEFAULT_GOAL := setup
 
-setup:
+setup_no_tensorflow:
 	@echo ${VENV_LOCATION}
 	@virtualenv --always-copy --system-site-packages --python=${PYTHON} ${VENV_LOCATION}
 	${VENV_PIP} install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.9.0.dev0-cp36-cp36m-manylinux1_x86_64.whl
 	${VENV_PIP} install -r requirements.txt
+
+setup: setup_no_tensorflow
+	${VENV_PIP} install -r tensorflow_requirements.txt
 
 mount:
 	@mkdir -p results
