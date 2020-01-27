@@ -77,7 +77,10 @@ if __name__ == "__main__":
         #run tune with the values from the config file
         with open(path_to_config, "r") as yamlfile:
             config = yaml.safe_load(yamlfile)
-        eval_unpack(config['tune'], config['to_eval'])
+
+        if config['to_eval'] != None:
+            eval_unpack(config['tune'], config['to_eval'])
+
         analysis = tune.run(config['algorithm'],
                 # trial_name_creator=get_trial_name,
                 # trial_name_creator=eval(config['trial_name_creator']),
