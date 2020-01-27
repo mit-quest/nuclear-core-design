@@ -25,8 +25,9 @@ class SwapEnv(gym.Env):
         # read in configuration file
         with open(path_to_config, "r") as yamlfile:
             config = yaml.safe_load(yamlfile)
+            config = config['gym']
 
-            continuous = config['gym']['continuous']
+            continuous = config['continuous']
             if (continuous != None):
                 self.shifting = True
                 self.n = continuous['start']
@@ -41,14 +42,14 @@ class SwapEnv(gym.Env):
 
             else:
                 self.shifting = False
-                self.n = config['gym']['n'] # n is the sidelength of our square gameboard, must be greater than 1
+                self.n = config['n'] # n is the sidelength of our square gameboard, must be greater than 1
                 self.end = self.n
-                self.game_length = config['gym']['game_length'] # the number of actions (swaps or null moves) to perform
+                self.game_length = config['game_length'] # the number of actions (swaps or null moves) to perform
 
-            self.num_colors = config['gym']['num_colors'] # number of colors that the AI can choose from
-            self.flatten = config['gym']['flatten'] # if true, flatttens the state to a 1d vector before returning
+            self.num_colors = config['num_colors'] # number of colors that the AI can choose from
+            self.flatten = config['flatten'] # if true, flatttens the state to a 1d vector before returning
 
-            seed = config['gym']['seed']
+            seed = config['seed']
             if (seed != None):
                 random.seed(seed)
 

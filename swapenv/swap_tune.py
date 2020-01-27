@@ -6,6 +6,7 @@ import argparse
 import gym
 import math
 import ray
+import yaml
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,6 +31,20 @@ def get_trial_name(trial):
 
     return str(trial)
 
+def eval_unpack(config, to_eval):
+    '''
+    takes all key/values pairs in to_eval and stores the eval'd values and corresponding keys
+    in config while taking into account the nesting of to_eval
+
+    config: the dictionary to add the eval'd key/value pairs to
+    to_eval: the dictionary to iterate though to get key/value pairs (can be nested)
+    '''
+    for key, value in to_eval.items():
+        if isinstance(value, dict):
+            eval_unpack(config[key], value)
+        else:
+            config[key] = eval(value)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train an RL agent on the swap environment')
     parser.add_argument(
@@ -46,29 +61,50 @@ if __name__ == "__main__":
         type=int,
         default=None,
         help="specify a seed to Rllib to make training reproducible")
+    parser.add_argument(
+        '-c', '--config',
+        action='store_true',
+        help="read in tune arguments from config file instead of defaults in .py file")
     args = parser.parse_args()
 
     path_to_config = str(pathlib.Path(__file__).parent.absolute()) + "/config.yaml"
 
     register_env("swap", lambda config: SwapEnv(path_to_config))
     ray.init(webui_host="0.0.0.0")
-    analysis = tune.run(
-        "PPO",
-        stop={"episode_reward_mean": 8},
-        trial_name_creator=get_trial_name,
-        config={
-            "env": "swap",
-            # "model": {"dim": 5, "conv_filters": [[16, [3, 3], 1]]},
-            # "schedule_max_timesteps": 1000000,
-            # param_name: tune.grid_search(search_values),
-            "num_workers": 7,
-            "seed": args.seed,
-        },
-        num_samples=args.num_trials,
-        checkpoint_freq = 10,
-        checkpoint_at_end=True,
-        max_failures = 5,
-    )
+    analysis = None
 
-    if (args.num_trials != 1):
-        plot_ave_reward(analysis)
+    if args.config:
+        #run tune with the values from the config file
+        with open(path_to_config, "r") as yamlfile:
+            config = yaml.safe_load(yamlfile)
+        eval_unpack(config['tune'], config['to_eval'])
+        analysis = tune.run(config['algorithm'],
+                # trial_name_creator=get_trial_name,
+                # trial_name_creator=eval(config['trial_name_creator']),
+                **config['tune'])
+
+        if (config['tune']['num_samples'] != 1):
+            plot_ave_reward(analysis)
+
+    else:
+        # run tune with the values provided here
+        analysis = tune.run(
+            "PPO",
+            stop={"episode_reward_mean": 8},
+            trial_name_creator=get_trial_name,
+            config={
+                "env": "swap",
+                # "model": {"dim": 5, "conv_filters": [[16, [3, 3], 1]]},
+                # "schedule_max_timesteps": 1000000,
+                # param_name: tune.grid_search(search_values),
+                "num_workers": 7,
+                "seed": args.seed,
+            },
+            num_samples=args.num_trials,
+            checkpoint_freq = 10,
+            checkpoint_at_end=True,
+            max_failures = 5,
+        )
+
+        if (args.num_trials != 1):
+            plot_ave_reward(analysis)

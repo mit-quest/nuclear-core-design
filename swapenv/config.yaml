@@ -11,3 +11,22 @@ gym:
     #   cutoff: .8
     #   logfile: continuous_log.txt
     #   ema_n: 100 # the number of episodes to consider in the EMA
+
+algorithm: "PPO"
+to_eval:
+  trial_name_creator: "get_trial_name"
+  config:
+    "lr": "tune.grid_search([1e-4, 1e-5, 1e-6])"
+
+tune:
+  stop:
+    episode_reward_mean: 8
+  config:
+    env: "swap"
+    num_workers: 7
+    num_gpus: 0
+    seed: null
+  num_samples: 1
+  checkpoint_freq: 10
+  checkpoint_at_end: true
+  max_failures: 5
