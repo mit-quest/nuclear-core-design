@@ -12,7 +12,8 @@ This environment is a benchmark of 6x6 BWR assembly with 1/2 symmetry (21 possib
 `data.tar.gz` contains the dataset which is two csv files for the inputs (enrichments in all 21 positions) and outputs (keff, ppf, enrichment)
 
 The objective function is:
-![Objective function](bwr6x6env/bwr6x6_objective_function.png)
+
+![Objective function](bwr6x6_objective_function.png)
 
 Of the 2M solutions, you should find 59 top solutions all with same objective function value of 0.016.
 
