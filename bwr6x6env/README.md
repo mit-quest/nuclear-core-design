@@ -15,7 +15,7 @@ The objective function is:
 
 ![Objective function](bwr6x6_objective_function.png)
 
-Of the 2M solutions, you should find 59 top solutions all with same objective function value of 0.016.
+If we set `w_p=0` when `PFF<1.35` then, of the 2M solutions, you should find 59 top solutions all with same objective function value of 0.016.
 
 ### Running the random agent:
 
