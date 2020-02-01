@@ -1,5 +1,15 @@
 sudo apt-get update -qq
 sudo apt-get install -y -qq build-essential
+sudo apt-get install -y -qq cmake \
+	git \
+	python3-setuptools \
+	python3-dev \
+	python3-pip \
+	htop \
+	tmux \
+	tree \
+  s3fs \
+  vim \
 
 #install nvidia drivers
 sudo add-apt-repository -y ppa:graphics-drivers
@@ -28,17 +38,6 @@ sudo apt-get install -y -qq --no-install-recommends libnvinfer5=5.1.5-1+cuda10.0
 export PATH=/usr/local/cuda-10.0/bin${PATH:+:${PATH}}
 rm *.deb
 
-sudo apt-get install -y -qq cmake \
-	git \
-	python3-setuptools \
-	python3-dev \
-	python3-pip \
-	htop \
-	tmux \
-	tree \
-  s3fs \
-  vim \
-
 #install docker
 sudo apt-get install -y -qq \
     apt-transport-https \
@@ -65,4 +64,4 @@ sudo systemctl restart docker
 #install python packages
 python3 -m pip install -q --upgrade pip
 sudo python3 -m pip install -q virtualenv
-cd ~/nuclear-core-design && make
+cd ~/nuclear-core-design && make setup_no_tensorflow
