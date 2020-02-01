@@ -4,13 +4,12 @@ gym:
     game_length: 9 
     seed: null # null is equivalent to python none
     flatten: true
-    continuous: null
-    # continuous: # overriedes n and game_length when specified since they shift dynamically
-    #   start: 2
-    #   end: 10
-    #   cutoff: .8
-    #   logfile: continuous_log.txt
-    #   ema_n: 100 # the number of episodes to consider in the EMA
+    # continuous: null
+    continuous: # overriedes n and game_length when specified since they shift dynamically
+      start: 2
+      end: 4 
+      cutoff: .8
+      ema_n: 100 # the number of episodes to consider in the EMA
 
 algorithm: "PPO"
 to_eval: #arguments that must go through a python eval() call before being passed to tune.run

@@ -81,10 +81,7 @@ if __name__ == "__main__":
         if config['to_eval'] != None:
             eval_unpack(config['tune'], config['to_eval'])
 
-        analysis = tune.run(config['algorithm'],
-                # trial_name_creator=get_trial_name,
-                # trial_name_creator=eval(config['trial_name_creator']),
-                **config['tune'])
+        analysis = tune.run(config['algorithm'], **config['tune'])
 
         if (config['tune']['num_samples'] != 1):
             plot_ave_reward(analysis)
@@ -93,7 +90,7 @@ if __name__ == "__main__":
         # run tune with the values provided here
         analysis = tune.run(
             "PPO",
-            stop={"episode_reward_mean": 8},
+            stop={"episode_reward_mean": 13},
             trial_name_creator=get_trial_name,
             config={
                 "env": "swap",
@@ -104,8 +101,8 @@ if __name__ == "__main__":
                 "seed": args.seed,
             },
             num_samples=args.num_trials,
-            checkpoint_freq = 10,
-            checkpoint_at_end=True,
+            # checkpoint_freq = 10,
+            # checkpoint_at_end=True,
             max_failures = 5,
         )
 

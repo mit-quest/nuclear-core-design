@@ -33,12 +33,10 @@ class SwapEnv(gym.Env):
                 self.n = continuous['start']
                 self.end = continuous['end']
                 self.game_length = self.n ** 2
-                self.logfile = continuous['logfile']
                 self.shift_cutoff = continuous['cutoff']
                 self.ema_n = continuous['ema_n']
-                self.episode_reward = 0
-                with open(self.logfile, "w") as f:
-                    f.write("0.0") # initialize the EMA to 0
+                self.episode_reward = 0.0
+                self.ema = 0.0
 
             else:
                 self.shifting = False
@@ -193,35 +191,17 @@ class SwapEnv(gym.Env):
     def reset(self):
 
         if self.shifting:
-            # check the current value of the moving ave, if it meets the cutoff criterea then make the board larger and notify the user
-            with open(self.logfile, "r+") as f:
-                try:
-                    text = f.read()
-                    old_ema = float(text)
-                except ValueError as e:
-                    if text == "":
-                        # someone else just tried to write 0
-                        old_ema = 0.0
-                    else:
-                        print(e)
-                        exit(0)
-
             k = 2 / (self.ema_n  + 1)
-            new_ema = k * self.episode_reward + old_ema * (1 - k)
+            self.ema = k * self.episode_reward + self.ema * (1 - k)
 
-            if new_ema > (self.n ** 2) * self.shift_cutoff:
-                with open(self.logfile, "w") as f:
-                    f.write("0.0") #start ema fresh
+            if self.ema > (self.n ** 2) * self.shift_cutoff:
+                # ema is higher than the specified cutoff, increase board size
+                # by 1 if max size not already reached
 
                 if self.n < self.end:
                     self.n += 1
                     self.game_length = self.n ** 2
                     print("New N:", self.n)
-                    with open("current_n.txt", "a+") as f:
-                        f.write(str(self.n))
-            else:
-                with open(self.logfile, "w") as f:
-                    f.write(str(new_ema))
 
             self.episode_reward = 0
 
