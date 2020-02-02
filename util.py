@@ -2,6 +2,7 @@ import os
 import math
 import json
 import datetime
+import copy
 import pandas as pd
 import numpy as np
 from collections import defaultdict
@@ -166,3 +167,40 @@ def eval_unpack(config, to_eval):
             eval_unpack(config[key], value)
         else:
             config[key] = eval(value)
+
+def str_insert(config, to_insert):
+    '''
+    For debug printing! takes all key/values pairs in to_insert and stores the values and
+    corresponding keys in config while taking into account the nesting of to_insert
+
+    config: the dictionary to add the key/value pairs to
+    to_insert: the dictionary to iterate though to get key/value pairs (can be nested)
+    '''
+    for key, value in to_insert.items():
+        if isinstance(value, dict):
+            str_insert(config[key], value)
+        else:
+            config[key] = value
+
+def debug_config_print(config):
+    '''
+    prints out the config as it would be passed to the tune.run, for example:
+
+    tune.run( PPO ,
+	 stop = {'episode_reward_mean': 7.2} ,
+	 config = {'env': 'swap', 'num_workers': 7, 'num_gpus': 0, 'seed': None} ,
+	 num_samples = 1 ,
+	 checkpoint_freq = 10 ,
+	 checkpoint_at_end = True ,
+	 max_failures = 5 ,
+	 trial_name_creator = lambda x : str(x) ,
+	 )
+    '''
+    config_copy = copy.deepcopy(config)
+    str_insert(config_copy['tune'], config_copy['to_eval'])
+    print("tune.run(",config_copy['algorithm'],',')
+
+    for key, value in config_copy['tune'].items():
+        print("\t",key,"=",value,",")
+
+    print("\t",")")

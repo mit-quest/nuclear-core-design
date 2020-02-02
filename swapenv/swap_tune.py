@@ -15,7 +15,7 @@ from ray.tune import grid_search
 from ray.tune.registry import register_env
 from swapenv import SwapEnv
 sys.path.append(".")
-from util import plot_ave_reward, eval_unpack
+from util import plot_ave_reward, eval_unpack, debug_config_print
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train an RL agent on the swap environment')
@@ -25,6 +25,10 @@ if __name__ == "__main__":
         type=str,
         default="/configs/swap_default_config.yaml",
         help="read in tune arguments from specified config file")
+    parser.add_argument(
+        '-d', '--debug-config',
+        action='store_true',
+        help='turns on the debug print')
     args = parser.parse_args()
 
     path_to_config = str(pathlib.Path(__file__).parent.parent.absolute()) + args.config
@@ -34,6 +38,8 @@ if __name__ == "__main__":
 
     with open(path_to_config, "r") as yamlfile:
         config = yaml.safe_load(yamlfile)
+        if args.debug_config:
+            debug_config_print(config)
 
     if config['to_eval'] != None:
         eval_unpack(config['tune'], config['to_eval'])
