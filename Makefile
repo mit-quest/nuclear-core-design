@@ -8,6 +8,13 @@ PIP ?= pip3.6
 UID := $(shell id -u ${USER})
 
 ###########################################################################
+# Miscellaneous Variables
+#
+S3FS_PAASSWD_FILE := keys/gcs-auth.txt
+GCP_BUCKET_NAME := nuclearcoredesign_sandbox
+MOUNT_DIRECTORY := results/
+
+###########################################################################
 # Virtual Environment Locations
 #
 # Should not really be changed
@@ -32,12 +39,12 @@ setup: setup_no_tensorflow
 	${VENV_PIP} install -q -r tensorflow_requirements.txt
 
 mount:
-	@mkdir -p results
-	@chmod 600 keys/gcs-auth.txt
-	s3fs nuclearcoredesign_sandbox results/ -o umask=0007,uid=${UID} -o passwd_file=keys/gcs-auth.txt -o url=https://storage.googleapis.com -o sigv2 -o nomultipart
+	@mkdir -p ${MOUNT_DIRECTORY}
+	@chmod 600 ${S3FS_PAASSWD_FILE}
+	s3fs ${GCP_BUCKET_NAME} ${MOUNT_DIRECTORY} -o umask=0007,uid=${UID} -o passwd_file=${S3FS_PAASSWD_FILE} -o url=https://storage.googleapis.com -o sigv2 -o nomultipart
 
 unmount:
-	sudo umount results/
+	sudo umount ${MOUNT_DIRECTORY}
 
 dockerGPUbuild:
 	docker image build -t nuclear_gpu:1.0 .
