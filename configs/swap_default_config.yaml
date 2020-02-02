@@ -1,25 +1,25 @@
 gym:
     n: 3
     num_colors: 2
-    game_length: 9 
+    game_length: 9
     seed: null # null is equivalent to python none
     flatten: true
-    # continuous: null
-    continuous: # overriedes n and game_length when specified since they shift dynamically
-      start: 2
-      end: 4 
-      cutoff: .8
-      ema_n: 100 # the number of episodes to consider in the EMA
+    continuous: null
+    # continuous: # overriedes n and game_length when specified since they shift dynamically
+    #   start: 2
+    #   end: 5 
+    #   cutoff: .8
+    #   ema_n: 100 # the number of episodes to consider in the EMA
 
 algorithm: "PPO"
 to_eval: #arguments that must go through a python eval() call before being passed to tune.run
-  trial_name_creator: "get_trial_name"
-  config:
-    "lr": "tune.grid_search([1e-4, 1e-5, 1e-6])"
+  trial_name_creator: "lambda x : str(x)"
+  # config:
+  #   "lr": "tune.grid_search([1e-4, 1e-5, 1e-6])"
 
 tune:
   stop:
-    episode_reward_mean: 8
+    episode_reward_mean: 7.2 
   config:
     env: "swap"
     num_workers: 7

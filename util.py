@@ -152,3 +152,17 @@ def plot_ave_reward(analysis):
     plt.savefig(filename, dpi=600)
     print("\nPlot saved to: " + filename + "\n")
     plt.plot()
+
+def eval_unpack(config, to_eval):
+    '''
+    takes all key/values pairs in to_eval and stores the eval'd values and corresponding keys
+    in config while taking into account the nesting of to_eval
+
+    config: the dictionary to add the eval'd key/value pairs to
+    to_eval: the dictionary to iterate though to get key/value pairs (can be nested)
+    '''
+    for key, value in to_eval.items():
+        if isinstance(value, dict):
+            eval_unpack(config[key], value)
+        else:
+            config[key] = eval(value)

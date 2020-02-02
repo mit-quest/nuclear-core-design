@@ -1,0 +1,25 @@
+gym:
+    n: 3 # the board side length
+    game_length: 9 # should be at least n^2 so the agent can increment each location
+    cutoff: 1.0
+    seed: null # null is equivalent to python none
+    flatten: true
+
+algorithm: "PPO"
+to_eval: #arguments that must go through a python eval() call before being passed to tune.run
+  trial_name_creator: "lambda x : str(x)"
+  # config:
+  #   "lr": "tune.grid_search([1e-4, 1e-5, 1e-6])"
+
+tune:
+  stop:
+    episode_reward_mean: 7 
+  config:
+    env: "float"
+    num_workers: 7
+    num_gpus: 0
+    seed: null
+  num_samples: 1
+  checkpoint_freq: 10
+  checkpoint_at_end: true
+  max_failures: 5

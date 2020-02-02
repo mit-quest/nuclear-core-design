@@ -1,6 +1,0 @@
-gym:
-    n: 5 # the board side length
-    game_length: 25 # should be at least n^2 so the agent can increment each location
-    cutoff: 1.0
-    seed: null # null is equivalent to python none
-    flatten: true
