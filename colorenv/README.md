@@ -9,8 +9,7 @@ This environment simulates an N x N grid that starts empty. At every timestep th
 ### Running the examples:
 1. Ensure you are in the `nuclear-core-design` directory
 2. Run `source .venv/bin/activate` to enter the virtual environment
-3. Run `python colorenv/color_tune.py` to train a DQN agent on a 3x3 coloring environment with 2 colors
-3. Run `python any_tune.py -c /configs/color_default_config.yaml` to train a PPO agent on a 3x3 coloring environment
+3. Run `python any_tune.py -c configs/color_default_config.yaml` to train a PPO agent on a 3x3 coloring environment
 
 ### Writing a config:
 Below is a list of the paramaters that can be used to control the gym coloring environment.

@@ -9,7 +9,7 @@ This environment simulates an N x N grid where each space is initialized to 0.0.
 ### Running the examples:
 1. Ensure you are in the `nuclear-core-design` directory
 2. Run `source .venv/bin/activate` to enter the virtual environement
-3. Run `python any_tune.py -c /configs/float_default_config.yaml` to train a PPO agent on a 5x5 floating environment
+3. Run `python any_tune.py -c configs/float_default_config.yaml` to train a PPO agent on a 5x5 floating environment
 
 ### Playing the environment yourself:
 You can run `python play.py` and interact with the environment yourself, the instructions are built in.

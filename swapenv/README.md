@@ -9,7 +9,7 @@ This environment simulates an N x N grid where each space is initialized to a ra
 ### Running the examples:
 1. Ensure you are in the `nuclear-core-design` directory
 2. Run `source .venv/bin/activate` to enter the virtual environement
-3. Run `python any_tune.py -c /configs/swap_default_config.yaml` to train a PPO agent on a 3x3 swap environment
+3. Run `python any_tune.py -c configs/swap_default_config.yaml` to train a PPO agent on a 3x3 swap environment
 
 ### Playing the environment yourself:
 You can run `python play.py` and interact with the environment yourself, the instructions are built in.

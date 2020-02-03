@@ -24,7 +24,7 @@ if __name__ == "__main__":
         '-c', '--config',
         metavar='PATH',
         type=str,
-        default="/configs/swap_default_config.yaml",
+        default="configs/swap_default_config.yaml",
         help="read in tune arguments from specified config file, e.g. '/configs/swap_default_config.yaml'")
     parser.add_argument(
         '-d', '--debug-config',
@@ -32,7 +32,7 @@ if __name__ == "__main__":
         help='turns on the debug print')
     args = parser.parse_args()
 
-    path_to_config = str(pathlib.Path(__file__).parent.parent.absolute()) + args.config
+    path_to_config = str(pathlib.Path(__file__).parent.parent.absolute()) + '/' + args.config
     print(path_to_config)
 
     register_env("swap", lambda config: SwapEnv(path_to_config))
