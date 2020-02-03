@@ -16,13 +16,15 @@ The second is a key to the cloud storage, follow the [instructions](https://gith
 1. Run `source .venv/bin/activate` to enter the virtual environment
 2. Run `python test_tune.py` to see Rllib train a PPO agent on CartPole and perform a grid search for the best learning rate
 
+
+## Training an Agent
+There is one script that can train an agent on any of the the environments. Simply run the script and specify a config file, `python any_tune.py -c path-to-config`, for example `python any_tune.py -c /configs/float_default_config.yaml`. 
+By default, if no `-c` flag is specified, the default config file is `/config/swap_default_config.yaml`. For details on config parameters specific to each environment see the section below. To pass arguments to tune.run() put them in the
+tune section of the config. Note that the algorithm must be specified in its own entry per the example configs. Additionally, any arguments that include python code and must be evaluated before being passed to tune.run() should go in the
+to_eval section of the config as shown by the examples. If you run into any errors with your config file, you can run the `any_tune.py` script with the `-d` flag which will turn on a debug print that shows you exactly how your paramaters
+are being passed to tune.run().
+
 ## Environments
-
-### Training an Agent
-
-There is one script that can train an agent on any of the the environments. Simply run the script and specify a config file, `python any_tune -c path-to-config`, for example `python any_tune -c /configs/float_default_config.yaml`. 
-By default, if no `-c` flag is specified, the default config file is `/config/swap_default_config.yaml`. For details on creating a config file, see the environments below. 
-
 ### Coloring Environment
 
 The purpose of the Coloring Environment is to serve as an optimization test over a parameterized number of discrete variables. See a detailed description of the environment and how to create a configuration file to run agents in it [here](colorenv/README.md).
