@@ -5,7 +5,7 @@ from colorenv import ColorEnv
 
 rewards = []
 num_iterations = 100000
-path_to_config = os.getcwd() + "/colorenv/config.yaml"
+path_to_config = os.getcwd() + "/configs/color_default_config.yaml"
 env = ColorEnv(path_to_config)
 observation = env.reset()
 

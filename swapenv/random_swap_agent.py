@@ -5,7 +5,7 @@ from swapenv import SwapEnv
 
 rewards = []
 num_iterations = 100000
-path_to_config = os.getcwd() + "/swapenv/config.yaml"
+path_to_config = os.getcwd() + "/configs/swap_default_config.yaml"
 env = SwapEnv(path_to_config)
 observation = env.reset()
 

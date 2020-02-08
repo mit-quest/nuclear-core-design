@@ -1,6 +1,0 @@
-gym:
-    n: 3
-    num_colors: 2
-    game_length: 10
-    seed: null # null is equivalent to python none
-    flatten: true

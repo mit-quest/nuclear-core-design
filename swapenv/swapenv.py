@@ -25,30 +25,49 @@ class SwapEnv(gym.Env):
         # read in configuration file
         with open(path_to_config, "r") as yamlfile:
             config = yaml.safe_load(yamlfile)
+            config = config['gym']
 
-            self.n = config['gym']['n'] # n is the sidelength of our square gameboard, must be greater than 1
-            self.game_length = config['gym']['game_length'] # the number of actions (swaps or null moves) to perform
-            self.num_colors = config['gym']['num_colors'] # number of colors that the AI can choose from
-            self.flatten = config['gym']['flatten'] # if true, flatttens the state to a 1d vector before returning
+            continuous = config['continuous']
+            if (continuous != None):
+                self.shifting = True
+                self.n = continuous['start']
+                self.end = continuous['end']
+                self.game_length = self.n ** 2
+                self.shift_cutoff = continuous['cutoff']
+                self.ema_n = continuous['ema_n']
+                self.episode_reward = 0.0
+                self.ema = 0.0
 
-            seed = config['gym']['seed']
+            else:
+                self.shifting = False
+                self.n = config['n'] # n is the sidelength of our square gameboard, must be greater than 1
+                self.end = self.n
+                self.game_length = config['game_length'] # the number of actions (swaps or null moves) to perform
+
+            self.num_colors = config['num_colors'] # number of colors that the AI can choose from
+            self.flatten = config['flatten'] # if true, flatttens the state to a 1d vector before returning
+
+            seed = config['seed']
             if (seed != None):
                 random.seed(seed)
 
         # whether to make the null move (no swap) as well as two locations (to swap if not null)
-        self.action_space = Tuple((Discrete(1), Discrete(self.n ** 2), Discrete(self.n ** 2)))
+        self.action_space = Tuple((Discrete(1), Discrete(self.end ** 2), Discrete(self.end ** 2)))
         if self.flatten:
-            self.observation_space = Box(low=0, high=self.num_colors+1, shape=(self.n * self.n,), dtype=np.int32)
+            self.observation_space = Box(low=0, high=self.num_colors+1, shape=(self.end * self.end,), dtype=np.int32)
         else:
-            self.observation_space = Box(low=0, high=self.num_colors+1, shape=(self.n, self.n), dtype=np.int32)
+            self.observation_space = Box(low=0, high=self.num_colors+1, shape=(self.end, self.end), dtype=np.int32)
 
         # and n x n array where the number represents a color, 1 is the first color, 2 is the second color, etc.
-        self.state = np.zeros((self.n,self.n), dtype = int)
+        self.state = np.zeros((self.end,self.end), dtype = int)
         self._generate_new_board()
 
         self.counter = 0 # the number of actions the agent has taken
         self.done = False # true if environement has reached terminal state, false otherwise
 
+
+    def continuous_enabled(self):
+        return self.shifting
 
     '''
     generates a fresh board position, attepts to place colors fairly. If the size of the board is divisible by
@@ -133,6 +152,8 @@ class SwapEnv(gym.Env):
     @check_rep_decorate
     def step(self, action):
         null, loc1, loc2 = action
+        if loc1 >= self.n ** 2 or loc2 >= self.n ** 2:
+            return [self._get_state_agent_view(), 0, self.done, {}]
 
         if self.done:
             print("Game is already over")
@@ -143,28 +164,47 @@ class SwapEnv(gym.Env):
         if self.counter == self.game_length:
             self.done = True
 
-        if null == 1:
-            # this is the null move, the agent has chosen not to swap pieces
-            return [self._get_state_agent_view(), self._current_score(), self.done, {}]
+        if null != 1:
+            # the agent has chosen not the make the null move and therefore to swap 2 pieces
 
-        # since locations are in row major order
-        row1 = loc1 // self.n
-        col1 = loc1 % self.n
-        row2 = loc2 // self.n
-        col2 = loc2 % self.n
+            # since locations are in row major order
+            row1 = loc1 // self.n
+            col1 = loc1 % self.n
+            row2 = loc2 // self.n
+            col2 = loc2 % self.n
 
-        # swap the pieces
-        temp = self.state[row1, col1]
-        self.state[row1, col1] = self.state[row2, col2]
-        self.state[row2, col2] = temp
+            # swap the pieces
+            temp = self.state[row1, col1]
+            self.state[row1, col1] = self.state[row2, col2]
+            self.state[row2, col2] = temp
 
-        return [self._get_state_agent_view(), self._current_score(), self.done, {}]
+        cur_score = self._current_score()
+        if self.shifting:
+            self.episode_reward += cur_score
+
+        return [self._get_state_agent_view(), cur_score, self.done, {}]
 
     '''
     resets the board
     '''
     @check_rep_decorate
     def reset(self):
+
+        if self.shifting:
+            k = 2 / (self.ema_n  + 1)
+            self.ema = k * self.episode_reward + self.ema * (1 - k)
+
+            if self.ema > (self.n ** 2) * self.shift_cutoff:
+                # ema is higher than the specified cutoff, increase board size
+                # by 1 if max size not already reached
+
+                if self.n < self.end:
+                    self.n += 1
+                    self.game_length = self.n ** 2
+                    print("New N:", self.n)
+
+            self.episode_reward = 0
+
         self.counter = 0
         self.done = 0
         self._generate_new_board()
@@ -192,6 +232,8 @@ class SwapEnv(gym.Env):
         print()
 
         if show_position_numbers:
+            if self.shifting:
+                row_len = self.n
             print("Position Numbers:")
             print(" " * 3, end="")
 
