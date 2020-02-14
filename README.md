@@ -36,6 +36,10 @@ The purpose of the Float Environment is to serve as an optimization test over a 
 
 The purpose of the Swap Environment is to serve as an optimization test over a parameterized number of discrete variables. See a detailed description of the environment and how to create a configuration file to run agents in it [here](swapenv/README.md).
 
+### BWR6x6 Environment
+
+The purpose of the BWR6x6 Environment is to serve as an optimization test for a true nuclear core design problem. See a detailed description of the environment and how to create a configuration file to run agents in it [here](bwr6x6env/README.md).
+
 ## Visualization:
 After running one of the tune script you can run `tensorboard --logdir=results` in another window to visualize training in your browser.
 

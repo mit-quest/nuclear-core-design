@@ -29,7 +29,11 @@ VENV_PIP := ${VENV_LOCATION}/bin/pip
 #
 .DEFAULT_GOAL := setup
 
-setup_no_tensorflow:
+unzip:
+	@unzip -o bwr6x6env/scaled_objective_func.zip -d bwr6x6env/
+	@unzip -o bwr6x6env/raw_objective_func.zip -d bwr6x6env/
+
+setup_no_tensorflow: unzip
 	@echo ${VENV_LOCATION}
 	@virtualenv --always-copy --system-site-packages --python=${PYTHON} ${VENV_LOCATION}
 	${VENV_PIP} install -q -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.9.0.dev0-cp36-cp36m-manylinux1_x86_64.whl

@@ -1,0 +1,23 @@
+gym:
+  game_length: 21
+  seed: null
+  pickle_file: "scaled_objective_func.p"
+
+algorithm: "PPO"
+to_eval: #arguments that must go through a python eval() call before being passed to tune.run
+  trial_name_creator: "lambda x : str(x)"
+  # config:
+  #   "lr": "tune.grid_search([1e-4, 1e-5, 1e-6])"
+
+tune:
+  stop:
+    episode_reward_mean: 17 
+  config:
+    env: "bwr6x6"
+    num_workers: 7
+    num_gpus: 0
+    seed: null
+  num_samples: 1
+  checkpoint_freq: 10
+  checkpoint_at_end: true
+  max_failures: 5
