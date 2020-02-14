@@ -38,9 +38,17 @@ The objective function is:
 If we set `w_p=0` when `PFF<1.35` then, of the 2M solutions, you should find 59 top solutions all with same objective function value of 0.016.
 
 ### Running the random agent:
-
+1. Ensure you are in the `nuclear-core-design` directory
+2. Run `source .venv/bin/activate` to enter the virtual environement
+3. Run `python bwr6x6env/random_swap_agent.py`
 
 ### Running the examples:
+1. Ensure you are in the `nuclear-core-design` directory
+2. Run `source .venv/bin/activate` to enter the virtual environement
+3. Run `python any_tune.py -c configs/bwr6x6_default_config.yaml` to train a PPO agent on a the bwr6x6 environment
 
-
-### Visualization:
+### Writing a config:
+Below is a list of the paramaters that can be used to control the gym bwr6x6 environment.
+* game_length: the number of actions the agent takes per episode
+* seed: either null or an integer 
+* pickle_file: the name of the file to load the objective function from, e.g. "scaled_objective_func.p"
