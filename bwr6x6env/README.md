@@ -49,6 +49,6 @@ If we set `w_p=0` when `PFF<1.35` then, of the 2M solutions, you should find 59 
 
 ### Writing a config:
 Below is a list of the paramaters that can be used to control the gym bwr6x6 environment.
-* game_length: the number of actions the agent takes per episode
 * seed: either null or an integer 
 * pickle_file: the name of the file to load the objective function from, e.g. "scaled_objective_func.p"
+* amplify_score: if true and the raw objective function is used, an optimal configuration has the reward value of 1000 instead of 62.5
