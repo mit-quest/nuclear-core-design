@@ -1,7 +1,7 @@
 gym:
-  game_length: 21
   seed: null
-  pickle_file: "scaled_objective_func.p"
+  pickle_file: "raw_objective_func.p"
+  amplify_score: true
 
 algorithm: "PPO"
 to_eval: #arguments that must go through a python eval() call before being passed to tune.run
@@ -11,13 +11,13 @@ to_eval: #arguments that must go through a python eval() call before being passe
 
 tune:
   stop:
-    episode_reward_mean: 17 
+    episode_reward_mean: 1600 
   config:
     env: "bwr6x6"
     num_workers: 7
     num_gpus: 0
     seed: null
-  num_samples: 1
+  num_samples: 4
   checkpoint_freq: 10
   checkpoint_at_end: true
   max_failures: 5
