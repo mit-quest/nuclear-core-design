@@ -73,8 +73,9 @@ class BWR6x6Env(gym.Env):
     def _current_score(self):
         key = tuple(self.state)
         score = self.objective_func[key]
-        if score == 62.5 and self.amplify_score:
-            return 1000.0
+        if score == 62.5 and self.counter == 21:
+            print("Optimal Found!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            # return 500
         return score
 
     '''
@@ -94,7 +95,11 @@ class BWR6x6Env(gym.Env):
         # check if game is over after this action
         if self.counter == 21:
             self.done = True
+            if self.amplify_score:
+                score *= score * score
+                score /= 10000
         else:
+            score = 0
             self._get_next_location()
 
 
