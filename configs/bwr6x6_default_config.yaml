@@ -2,6 +2,7 @@ gym:
   seed: null
   pickle_file: "raw_objective_func.p"
   amplify_score: true
+  ordered_placement: true
 
 algorithm: "PPO"
 to_eval: #arguments that must go through a python eval() call before being passed to tune.run
@@ -11,14 +12,8 @@ to_eval: #arguments that must go through a python eval() call before being passe
 
 tune:
   stop:
-    episode_reward_mean: 62.5 
+    timesteps_total: 300000
   config:
-    model:
-      fcnet_hiddens: 
-        - 512
-        - 512
-        - 512
-    entropy_coeff: 0.05
     env: "bwr6x6"
     num_workers: 7
     num_gpus: 0
