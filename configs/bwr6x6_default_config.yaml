@@ -16,7 +16,7 @@ tune:
   stop:
     timesteps_total: 150000
   config:
-    num_workers: 4
+    num_workers: 7
     num_envs_per_worker: 1
     sample_batch_size: 200
     num_gpus: 0
@@ -32,7 +32,7 @@ tune:
     lr: 0.00001
     env: "bwr6x6"
     seed: null
-  num_samples: 6
-  checkpoint_freq: 25
+  num_samples: 1
+  checkpoint_freq: 10
   checkpoint_at_end: true
   max_failures: 3
