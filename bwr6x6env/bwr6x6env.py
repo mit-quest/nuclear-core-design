@@ -15,7 +15,6 @@ class BWR6x6Env(gym.Env):
         with open(path_to_config, "r") as yamlfile:
             config = yaml.safe_load(yamlfile)
 
-            self.amplify_score = config['gym']['amplify_score'] # whether or not to amplify the score of optimal configurations
             self.ordered_placement = config['gym']['ordered_placement'] # whether or not to deterministically give agent locations
             pickle_file = config['gym']['pickle_file'] # the name of the pickled file that stores the objective function
 
@@ -80,7 +79,6 @@ class BWR6x6Env(gym.Env):
         score = self.objective_func[key]
         if score == 62.5 and self.counter == 21:
             print("Optimal Found!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            # return 500
         return score
 
     '''
@@ -100,9 +98,6 @@ class BWR6x6Env(gym.Env):
         # check if game is over after this action
         if self.counter == 21:
             self.done = True
-            # if self.amplify_score:
-            #     score *= score * score
-            #     score /= 10000
         else:
             score = 0
             self._get_next_location()

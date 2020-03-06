@@ -51,4 +51,4 @@ If we set `w_p=0` when `PFF<1.35` then, of the 2M solutions, you should find 59 
 Below is a list of the paramaters that can be used to control the gym bwr6x6 environment.
 * seed: either null or an integer 
 * pickle_file: the name of the file to load the objective function from, e.g. "scaled_objective_func.p"
-* amplify_score: if true and the raw objective function is used, an optimal configuration has the reward value of 1000 instead of 62.5
+* ordered_placement: if true, the rods are presented to the agent in the order 1 through 21, otherwise the order is random
