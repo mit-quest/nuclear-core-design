@@ -1,23 +1,38 @@
 gym:
   seed: null
   pickle_file: "raw_objective_func.p"
-  amplify_score: true
+  ordered_placement: false
 
 algorithm: "PPO"
 to_eval: #arguments that must go through a python eval() call before being passed to tune.run
   trial_name_creator: "lambda x : str(x)"
   # config:
-  #   "lr": "tune.grid_search([1e-4, 1e-5, 1e-6])"
+  #   gamma: "tune.grid_search([0.999999, 0.9999, 0.99])"
+  #   lr: "tune.grid_search([1e-4, 1e-5, 1e-6])"
+  #   entropy_coeff: "tune.grid_search([0.001, 0.01, 0.0001])"
+  #   grad_clip: "tune.grid_search([10.0, None, 100.0])"
 
 tune:
   stop:
-    episode_reward_mean: 1600 
+    timesteps_total: 150000
   config:
-    env: "bwr6x6"
     num_workers: 7
+    num_envs_per_worker: 1
+    sample_batch_size: 200
     num_gpus: 0
+    train_batch_size: 200
+    model:
+      fcnet_hiddens:
+        - 512
+        - 512
+        - 512
+    entropy_coeff: 0.01
+    gamma: 0.99
+    grad_clip: null
+    lr: 0.00001
+    env: "bwr6x6"
     seed: null
   num_samples: 1
   checkpoint_freq: 10
   checkpoint_at_end: true
-  max_failures: 5
+  max_failures: 3

@@ -15,7 +15,7 @@ class BWR6x6Env(gym.Env):
         with open(path_to_config, "r") as yamlfile:
             config = yaml.safe_load(yamlfile)
 
-            self.amplify_score = config['gym']['amplify_score'] # whether or not to amplify the score of optimal configurations
+            self.ordered_placement = config['gym']['ordered_placement'] # whether or not to deterministically give agent locations
             pickle_file = config['gym']['pickle_file'] # the name of the pickled file that stores the objective function
 
             # a dictionary from state to reward value
@@ -50,19 +50,23 @@ class BWR6x6Env(gym.Env):
     gets the first location to choose enrichment of
     '''
     def _first_location(self):
-        # set the first location in the placement array
-        self.current_loc = random.choice(tuple(self.free_coords)) # the next location to place a piece at
-        self.free_coords.remove(self.current_loc)
+        if not self.ordered_placement:
+            # set the first location in the placement array
+            self.current_loc = random.choice(tuple(self.free_coords)) # the next location to place a piece at
+            self.free_coords.remove(self.current_loc)
+        else:
+            self.current_loc = self.counter
 
     '''
     gets a new location from the free_coords set
     '''
     def _get_next_location(self):
-        assert len(self.free_coords), "free_coords is empty, there are no more positions availble"
-
-        # get new location and remove it from future options
-        self.current_loc = random.choice(tuple(self.free_coords))
-        self.free_coords.remove(self.current_loc)
+        if not self.ordered_placement:
+            # get new location and remove it from future options
+            self.current_loc = random.choice(tuple(self.free_coords))
+            self.free_coords.remove(self.current_loc)
+        else:
+            self.current_loc = self.counter
 
     '''
     return the current reward based upon the objective function described in the readme
@@ -73,8 +77,8 @@ class BWR6x6Env(gym.Env):
     def _current_score(self):
         key = tuple(self.state)
         score = self.objective_func[key]
-        if score == 62.5 and self.amplify_score:
-            return 1000.0
+        if score == 62.5 and self.counter == 21:
+            print("Optimal Found!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         return score
 
     '''
@@ -95,6 +99,7 @@ class BWR6x6Env(gym.Env):
         if self.counter == 21:
             self.done = True
         else:
+            score = 0
             self._get_next_location()
 
 

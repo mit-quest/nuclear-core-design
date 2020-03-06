@@ -52,5 +52,6 @@ if __name__ == "__main__":
 
     analysis = tune.run(config['algorithm'], **config['tune'])
 
-    if (config['tune']['num_samples'] != 1):
-        plot_ave_reward(analysis)
+    # TODO currently custom plotting is broken
+    # if (config['tune']['num_samples'] != 1):
+    #     plot_ave_reward(analysis)
