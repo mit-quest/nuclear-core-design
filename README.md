@@ -44,8 +44,15 @@ The purpose of the BWR6x6 Environment is to serve as an optimization test for a 
 After running one of the tune script you can run `tensorboard --logdir=results` in another window to visualize training in your browser.
 
 ## Distributed Training:
+### Setup
 1. `terraform apply`
 2. `make clusterConnect`
 3. `ray up kubernetes-full.yaml`
-4. `ray attach kubernetes-full.yaml`
-5. `python3 cluster_tune -c path/to/config.yaml`
+
+### Run
+1. `ray attach kubernetes-full.yaml`
+2. `python3 cluster_tune -c path/to/config.yaml`
+
+### Teardown
+1. `ray down kubernetes-full.yaml`
+2. `terraform destroy`
