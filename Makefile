@@ -45,7 +45,7 @@ setup: setup_no_tensorflow
 mount:
 	@mkdir -p ${MOUNT_DIRECTORY}
 	@chmod 600 ${S3FS_PAASSWD_FILE}
-	s3fs ${GCP_BUCKET_NAME} ${MOUNT_DIRECTORY} -o umask=0007,uid=${UID} -o passwd_file=${S3FS_PAASSWD_FILE} -o url=https://storage.googleapis.com -o sigv2 -o nomultipart
+	s3fs ${GCP_BUCKET_NAME} ${MOUNT_DIRECTORY} -o umask=0007,uid=${UID} -o passwd_file=${S3FS_PAASSWD_FILE} -o url=https://storage.googleapis.com -o sigv2 -o nomultipart -f
 
 unmount:
 	sudo umount ${MOUNT_DIRECTORY}
