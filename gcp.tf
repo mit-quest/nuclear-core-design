@@ -1,16 +1,11 @@
 variable "gcp_key_file_location" {}
 variable "username" {}
 variable "project_name" {}
-variable "number_of_cpus" {}
-variable "ram_size_mb" {}
-variable "hard_drive_size_gp" {}
-variable "number_of_machines" {}
+variable "node_count" {}
 variable "private_ssh_key_location" {}
 variable "public_ssh_key_location" {}
-variable "gpu_type" {}
-variable "number_of_gpus" {}
 variable "repository_name" {}
-
+variable "preemptible" {}
 
 provider "google" {
   credentials = var.gcp_key_file_location
@@ -18,156 +13,57 @@ provider "google" {
   region      = "us-east1"
 }
 
-resource "google_compute_instance" "vm" {
-  count                     = var.number_of_machines
-  name                      = "${element(split("_", var.username), 0)}-nuclearcoredesign-${count.index}"
-  machine_type              = "custom-${var.number_of_cpus}-${var.ram_size_mb}"
-  zone                      = "us-east1-c"
-  allow_stopping_for_update = true
-  tags                      = [var.project_name]
+resource "google_container_cluster" "primary" {
+  name     = "my-gke-cluster"
+  location = "us-east1"
 
-  boot_disk {
-    initialize_params {
-      image = "projects/ubuntu-os-cloud/global/images/ubuntu-1804-bionic-v20191211"
-      size  = var.hard_drive_size_gp
-      type  = "pd-ssd"
+  # We can't create a cluster with no node pool defined, but we want to only use
+  # separately managed node pools. So we create the smallest possible default
+  # node pool and immediately delete it.
+  remove_default_node_pool = true
+  initial_node_count       = 1
+
+  master_auth {
+    username = ""
+    password = ""
+
+    client_certificate_config {
+      issue_client_certificate = false
     }
   }
 
-  metadata = {
-    ssh-keys = "${var.username}:${file(var.public_ssh_key_location)}"
-  }
-
-  service_account {
-    scopes = ["cloud-platform"]
-  }
-
-  network_interface {
-    network = "default"
-    access_config {
-      // Ephemeral IP - leaving this block empty will generate a new external IP and assign it to the machine
+  cluster_autoscaling {
+    enabled = "true"
+    resource_limits {
+      resource_type = "cpu"
+      minimum = 8
+      maximum = 128
     }
-  }
-
-  guest_accelerator{
-    type = var.gpu_type // Type of GPU attahced
-    count = var.number_of_gpus // Num of GPU attached
-  }
-
-  scheduling {
-    on_host_maintenance = "TERMINATE" // Need to terminate GPU on maintenance
-  }
-
-  provisioner "file" {
-    source      = "../${var.repository_name}"
-    destination = "~/${var.repository_name}"
-    connection {
-      user        = var.username
-      type        = "ssh"
-      private_key = file(var.private_ssh_key_location)
-      host        = self.network_interface[0].access_config[0].nat_ip
+    resource_limits {
+      resource_type = "memory"
+      minimum = 51200 
+      maximum = 102400
     }
-  }
 
-  provisioner "remote-exec" {
-    script = "./scripts/resource_creation.sh"
-    connection {
-      user        = var.username
-      type        = "ssh"
-      private_key = file(var.private_ssh_key_location)
-      host        = self.network_interface[0].access_config[0].nat_ip
-    }
   }
-
-  # final reboot because of the cuda install, will tell terraform it has "failed" since it lost connection
-  provisioner "remote-exec" {
-    inline = [
-      "sudo reboot"
-    ]
-    on_failure = continue  # ignore the incorrect failure
-    connection {
-      user = var.username
-      type = "ssh"
-      private_key = file(var.private_ssh_key_location)
-      host = self.network_interface[0].access_config[0].nat_ip
-    }
-  }
-
 }
 
-resource "google_compute_instance" "dev_vm" {
-  count                     = 1
-  name                      = "isaacw-nuclearcoredesign-dev"
-  machine_type              = "custom-8-51200"
-  zone                      = "us-east1-c"
-  allow_stopping_for_update = true
-  tags                      = [var.project_name]
+resource "google_container_node_pool" "primary_nodes" {
+  name       = "my-node-pool"
+  location   = "us-east1"
+  cluster    = google_container_cluster.primary.name
+  node_count = 1
 
-  boot_disk {
-    initialize_params {
-      image = "projects/ubuntu-os-cloud/global/images/ubuntu-1804-bionic-v20191211"
-      size  = "250"
-      type  = "pd-ssd"
+  node_config {
+    machine_type = "n1-standard-1"
+
+    metadata = {
+      disable-legacy-endpoints = "true"
     }
-  }
 
-  metadata = {
-    ssh-keys = "${var.username}:${file(var.public_ssh_key_location)}"
-  }
-
-  service_account {
-    scopes = ["cloud-platform"]
-  }
-
-  network_interface {
-    network = "default"
-    access_config {
-      // Ephemeral IP - leaving this block empty will generate a new external IP and assign it to the machine
-    }
-  }
-
-  guest_accelerator{
-    type = var.gpu_type // Type of GPU attahced
-    count = 1 // Num of GPU attached
-  }
-
-  scheduling {
-    on_host_maintenance = "TERMINATE" // Need to terminate GPU on maintenance
-  }
-
-  provisioner "file" {
-    source      = "../${var.repository_name}"
-    destination = "~/${var.repository_name}"
-    connection {
-      user        = var.username
-      type        = "ssh"
-      private_key = file(var.private_ssh_key_location)
-      host        = self.network_interface[0].access_config[0].nat_ip
-    }
-  }
-
-  provisioner "remote-exec" {
-    script = "./scripts/resource_creation.sh"
-    connection {
-      user        = var.username
-      type        = "ssh"
-      private_key = file(var.private_ssh_key_location)
-      host        = self.network_interface[0].access_config[0].nat_ip
-    }
-  }
-
-  # final reboot because of the cuda install, will tell terraform it has "failed" since it lost connection
-  provisioner "remote-exec" {
-    inline = [
-      "sudo reboot"
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
     ]
-    on_failure = continue  # ignore the incorrect failure
-    connection {
-      user = var.username
-      type = "ssh"
-      private_key = file(var.private_ssh_key_location)
-      host = self.network_interface[0].access_config[0].nat_ip
-    }
   }
-
 }

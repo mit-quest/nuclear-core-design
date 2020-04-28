@@ -51,10 +51,21 @@ unmount:
 	sudo umount ${MOUNT_DIRECTORY}
 
 dockerGPUbuild:
-	docker image build -t nuclear_gpu:1.0 .
+	docker build -t nuclear-gpu .
 
 dockerGPUrun:
-	docker run --rm -it --shm-size=20G -p 0.0.0.0:6006:6006 --gpus all nuclear_gpu:1.0
+	docker run --rm -it --shm-size=20G -p 0.0.0.0:6006:6006 --gpus all nuclear-gpu
+
+dockerGPUpushGCR:
+	docker tag nuclear-gpu gcr.io/test-bridge-project/nuclear-gpu
+	docker push gcr.io/test-bridge-project/nuclear-gpu
+
+dockerGPUpushHub:
+	docker tag nuclear-gpu questncd/mit_quest_ncd
+	docker push questncd/mit_quest_ncd
+
+clusterConnect:
+	gcloud container clusters get-credentials my-gke-cluster --region us-east1 --project test-bridge-project
 
 clean:
 	rm -rf .venv/

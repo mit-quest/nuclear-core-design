@@ -1,12 +1,8 @@
-project_name             = "bridge-urops"
+project_name             = "test-bridge-project"
 username                 = "isaacw_google"
-gcp_key_file_location    = "keys/bridge-urops-8c88f93590bd.json"
+gcp_key_file_location    = "keys/test-bridge-project-2cd1cca27532.json"
 public_ssh_key_location  = "~/.ssh/gcp.pub"
 private_ssh_key_location = "~/.ssh/gcp"
 repository_name          = "nuclear-core-design"
-hard_drive_size_gp       = "250"
-ram_size_mb              = "51200"
-number_of_cpus           = "24"
-number_of_machines       = 1
-gpu_type = "nvidia-tesla-t4"
-number_of_gpus = 1
+node_count               = 3
+preemptible              = true

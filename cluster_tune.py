@@ -50,7 +50,7 @@ if __name__ == "__main__":
     if config['to_eval'] != None:
         eval_unpack(config['tune'], config['to_eval'])
 
-    analysis = tune.run(config['algorithm'], **config['tune'])
+    analysis = tune.run(config['algorithm'], **config['tune'], queue_trials=True)
 
     # TODO currently custom plotting is broken
     # if (config['tune']['num_samples'] != 1):

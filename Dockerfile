@@ -1,4 +1,5 @@
-FROM nvcr.io/nvidia/tensorflow:19.12-tf2-py3
+# FROM nvcr.io/nvidia/tensorflow:19.12-tf2-py3
+FROM rayproject/autoscaler
 
 WORKDIR /home/nuclear-core-design
 COPY . .
