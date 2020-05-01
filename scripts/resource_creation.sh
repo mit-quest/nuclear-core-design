@@ -10,6 +10,8 @@ sudo apt-get install -y -qq cmake \
 	tree \
   s3fs \
   vim \
+  zip \
+  unzip \
 
 #install nvidia drivers
 sudo add-apt-repository -y ppa:graphics-drivers
@@ -64,4 +66,5 @@ sudo systemctl restart docker
 #install python packages
 python3 -m pip install -q --upgrade pip
 sudo python3 -m pip install -q virtualenv
-cd ~/nuclear-core-design && make setup_no_tensorflow
+# cd ~/nuclear-core-design && make setup_no_tensorflow
+cd ~/nuclear-core-design && make
