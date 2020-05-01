@@ -17,6 +17,7 @@ from swapenv.swapenv import SwapEnv
 from floatenv.floatenv import FloatEnv
 from colorenv.colorenv import ColorEnv
 from bwr6x6env.bwr6x6env import BWR6x6Env
+from casmo10x10env.casmo10x10_env import Casmo4Env
 from util import plot_ave_reward, eval_unpack, debug_config_print
 
 if __name__ == "__main__":
@@ -40,6 +41,7 @@ if __name__ == "__main__":
     register_env("float", lambda config: FloatEnv(path_to_config))
     register_env("color", lambda config: ColorEnv(path_to_config))
     register_env("bwr6x6", lambda config: BWR6x6Env(path_to_config))
+    register_env("casmo10x10", lambda config: Casmo4Env())
     ray.init(webui_host="0.0.0.0")
 
     with open(path_to_config, "r") as yamlfile:

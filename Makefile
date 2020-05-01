@@ -58,3 +58,5 @@ dockerGPUrun:
 
 clean:
 	rm -rf .venv/
+	rm -f bwr6x6env/raw_objective_func.p
+	rm -f bwr6x6env/scaled_objective_func.p

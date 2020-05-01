@@ -40,6 +40,21 @@ The purpose of the Swap Environment is to serve as an optimization test over a p
 
 The purpose of the BWR6x6 Environment is to serve as an optimization test for a true nuclear core design problem. See a detailed description of the environment and how to create a configuration file to run agents in it [here](bwr6x6env/README.md).
 
+### Casmo10x10 Environment
+
+The purpose of the Casmo10x10 Environment is to serve as an optimization test for a large scale nuclear core design problem. There are no specific gym paramaters to control. 
+
 ## Visualization:
 After running one of the tune script you can run `tensorboard --logdir=results` in another window to visualize training in your browser.
 
+## Training On Cloud Machines
+Note that this requires you to complete the setup keys section above. The number of machines and their specifications are controlled by the terraform.tfvars file.
+1. Run `terraform apply` this will create the machines (you'll generally want to `make clean` before this or it will take forever to copy the repository over)
+2. Connect with `ssh -i private_ssh_key_location username@server_ip` where private_key_location and username match the variables specified in the terraform.tfvars file. You can find the server ip in the gcp compute console.
+3. Run `cd nuclear-core-design/; source .venv/bin/activate; make mount` 
+4. Run `python3 any_tune.py -c path/to/config.yaml`
+
+### Visualizing On Cloud Machines
+1. `ssh -L 16006:127.0.0.1:6006 -i private_ssh_key_location username@server_ip` will open an ssh window that forwards port 6006 on the server to localhost:16006
+2. Run `cd nuclear-core-design/; source .venv/bin/activate` 
+3. Run `tensorboard --logdir=results`
