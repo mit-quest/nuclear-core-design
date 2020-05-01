@@ -53,6 +53,7 @@ Note that this requires you to complete the setup keys section above. The number
 2. Connect with `ssh -i private_ssh_key_location username@server_ip` where private_key_location and username match the variables specified in the terraform.tfvars file. You can find the server ip in the gcp compute console.
 3. Run `cd nuclear-core-design/; source .venv/bin/activate; make mount` 
 4. Run `python3 any_tune.py -c path/to/config.yaml`
+4. Once training is complete you can exit the ssh session and run `terrafrom destroy` to remove the vm.
 
 ### Visualizing On Cloud Machines
 1. `ssh -L 16006:127.0.0.1:6006 -i private_ssh_key_location username@server_ip` will open an ssh window that forwards port 6006 on the server to localhost:16006
