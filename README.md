@@ -58,3 +58,4 @@ Note that this requires you to complete the setup keys section above. The number
 1. `ssh -L 16006:127.0.0.1:6006 -i private_ssh_key_location username@server_ip` will open an ssh window that forwards port 6006 on the server to localhost:16006
 2. Run `cd nuclear-core-design/; source .venv/bin/activate` 
 3. Run `tensorboard --logdir=results`
+4. Navigate to `localhost:16006` in your browser
