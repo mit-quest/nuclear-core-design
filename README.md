@@ -40,6 +40,10 @@ The purpose of the Swap Environment is to serve as an optimization test over a p
 
 The purpose of the BWR6x6 Environment is to serve as an optimization test for a true nuclear core design problem. See a detailed description of the environment and how to create a configuration file to run agents in it [here](bwr6x6env/README.md).
 
+### Casmo10x10 Environment
+
+The purpose of the Casmo10x10 Environment is to serve as an optimization test for a large scale nuclear core design problem. There are no specific gym paramaters to control. 
+
 ## Visualization:
 After running one of the tune script you can run `tensorboard --logdir=results` in another window to visualize training in your browser.
 
