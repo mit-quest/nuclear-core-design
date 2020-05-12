@@ -71,7 +71,7 @@ resource "google_compute_instance" "vm" {
 
   provisioner "remote-exec" {
     inline = [
-      'cp ~/nuclear-core-design/simulate3/.studsvikrc ~/; sudo cp ~/nuclear-core-design/simulate3/bin/* /bin/; echo "export PATH=\"~/nuclear-core-design/simulate3/bin:$PATH\"" >> ~/.bashrc'
+      "cp ~/nuclear-core-design/simulate3/.studsvikrc ~/; sudo cp ~/nuclear-core-design/simulate3/bin/* /bin/; echo \"export PATH=\"~/nuclear-core-design/simulate3/bin:$PATH\"\" >> ~/.bashrc"
     ]
     on_failure = continue  # ignore the incorrect failure
     connection {
