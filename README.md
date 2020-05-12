@@ -12,6 +12,10 @@ You have now successfully installed the repository!
 You will need two keys associated with the gcp project, "bridge-urops". The first is a service account, follow the [instructions](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) and put the resulting json in the keys directory.
 The second is a key to the cloud storage, follow the [instructions](https://github.com/s3fs-fuse/s3fs-fuse/wiki/Google-Cloud-Storage#get-credentials) and put the resulting gcs-auth.txt file in the keys directory.
 
+## Nuclear Functionality (optional)
+In order for terraform to copy over the simulate3 and casmo4e binaries you must download the simulate3 folder from the dropbox and copy the contents into the empty simulate3 directory in this repository. The terraform install scripts handle adding the binaries to the path, moving .studsvickrc to the right path, etc.  
+Just be sure to change the PREFIX path in .studsvikrc to /home/your_ssh_username_same_as_terraform/nuclear_core_design/simulate3/
+
 ## Running the test example:
 1. Run `source .venv/bin/activate` to enter the virtual environment
 2. Run `python test_tune.py` to see Rllib train a PPO agent on CartPole and perform a grid search for the best learning rate

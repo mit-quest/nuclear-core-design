@@ -70,6 +70,19 @@ resource "google_compute_instance" "vm" {
   }
 
   provisioner "remote-exec" {
+    inline = [
+      'cp ~/nuclear-core-design/simulate3/.studsvikrc ~/; sudo cp ~/nuclear-core-design/simulate3/bin/* /bin/; echo "export PATH=\"~/nuclear-core-design/simulate3/bin:$PATH\"" >> ~/.bashrc'
+    ]
+    on_failure = continue  # ignore the incorrect failure
+    connection {
+      user = var.username
+      type = "ssh"
+      private_key = file(var.private_ssh_key_location)
+      host = self.network_interface[0].access_config[0].nat_ip
+    }
+  }
+
+  provisioner "remote-exec" {
     script = "./scripts/resource_creation.sh"
     connection {
       user        = var.username

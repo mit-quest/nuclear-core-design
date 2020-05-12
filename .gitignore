@@ -8,3 +8,4 @@ terraform.tfstate*
 keys/
 bwr6x6env/raw_objective_func.p
 bwr6x6env/scaled_objective_func.p
+simulate3/
